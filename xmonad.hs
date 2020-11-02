@@ -12,6 +12,7 @@ import Data.Monoid
 import System.Exit
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
+import XMonad.Layout.NoBorders
 import XMonad.Layout.Spacing
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
@@ -34,7 +35,7 @@ myClickJustFocuses = False
 
 -- Width of the window border in pixels.
 --
-myBorderWidth   = 1
+myBorderWidth   = 6
 
 -- modMask lets you specify which modkey you want to use. The default
 -- is mod1Mask ("left alt").  You may also consider using mod3Mask
@@ -56,8 +57,8 @@ myWorkspaces    = map show [1..9]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
-myNormalBorderColor  = "#dddddd"
-myFocusedBorderColor = "#ff0000"
+myNormalBorderColor  = "#666666"
+myFocusedBorderColor = "#4570ff"
 
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
@@ -186,22 +187,26 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = avoidStruts $ spacingRaw True sb True sb True $ tiled ||| Mirror tiled ||| Full
-  where
-     -- default tiling algorithm partitions the screen into two panes
-     tiled   = Tall nmaster delta ratio
+myLayout =
+  avoidStruts
+  $ smartBorders
+  $ spacingRaw True sb True sb True
+  $ tiled ||| Mirror tiled ||| Full
+    where
+       -- default tiling algorithm partitions the screen into two panes
+       tiled   = Tall nmaster delta ratio
 
-     -- The default number of windows in the master pane
-     nmaster = 1
+       -- The default number of windows in the master pane
+       nmaster = 1
 
-     -- Default proportion of screen occupied by master pane
-     ratio   = 1/2
+       -- Default proportion of screen occupied by master pane
+       ratio   = 1/2
 
-     -- Percent of screen to increment by when resizing panes
-     delta   = 3/100
+       -- Percent of screen to increment by when resizing panes
+       delta   = 3/100
 
-     px      = 15
-     sb      = Border { top = px, bottom = px, left = px, right = px }
+       px      = 10
+       sb      = Border { top = px, bottom = px, left = px, right = px }
 
 ------------------------------------------------------------------------
 -- Window rules:
