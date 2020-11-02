@@ -10,6 +10,7 @@
 import XMonad
 import Data.Monoid
 import System.Exit
+import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Layout.Spacing
 import XMonad.Util.Run
@@ -240,7 +241,14 @@ myEventHook = mempty
 -- Perform an arbitrary action on each internal state change or X event.
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 --
-myLogHook = return ()
+myLogHook h = dynamicLogWithPP $ def
+  { ppLayout = const ""  -- Don't show the layout name
+  -- , ppSort = getSortByXineramaRule  -- Sort left/right screens on the left, non-empty workspaces after those
+  , ppTitle = id  -- Don't show the focused window's title
+  , ppTitleSanitize = const ""  -- Also about window's title
+  , ppVisible = wrap "(" ")"  -- Non-focused (but still visible) screen
+  , ppOutput = hPutStrLn h
+  }
 
 ------------------------------------------------------------------------
 -- Startup hook
@@ -251,8 +259,9 @@ myLogHook = return ()
 --
 -- By default, do nothing.
 myStartupHook = do
-	spawnOnce "nitrogen --restore &"
-	spawnOnce "picom &"
+  spawnOnce "nitrogen --restore &"
+  spawnOnce "picom &"
+  
 
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.
@@ -260,16 +269,8 @@ myStartupHook = do
 -- Run xmonad with the settings you specify. No need to modify this.
 --
 main = do
-	spawnPipe "xmobar -x 0 /home/james/.xmonad/xmobar.hs"
-	xmonad $ docks defaults
-
--- A structure containing your configuration settings, overriding
--- fields in the default config. Any you don't override, will
--- use the defaults defined in xmonad/XMonad/Config.hs
---
--- No need to modify this.
---
-defaults = def {
+  xmobarProc <- spawnPipe "xmobar -x 0 /home/james/.xmonad/xmobar.hs"
+  xmonad $ docks $ def {
       -- simple stuff
         terminal           = myTerminal,
         focusFollowsMouse  = myFocusFollowsMouse,
@@ -288,7 +289,7 @@ defaults = def {
         layoutHook         = myLayout,
         manageHook         = myManageHook,
         handleEventHook    = myEventHook,
-        logHook            = myLogHook,
+        logHook            = myLogHook xmobarProc,
         startupHook        = myStartupHook
     }
 
