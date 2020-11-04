@@ -14,6 +14,7 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spacing
+import XMonad.Util.Dzen
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
 
@@ -60,6 +61,13 @@ myWorkspaces    = map show [1..9]
 myNormalBorderColor  = "#666666"
 myFocusedBorderColor = "#4570ff"
 
+alert :: String -> X ()
+alert = dzenConfig centered
+  where centered =
+          onCurr (center 300 200)
+          >=> font "-*-helvetica-*-r-*-*-100-*-*-*-*-*-*-*"
+          >=> addArgs ["-fg", "#80c0ff"]
+          >=> addArgs ["-bg", "#000040"]
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
 --
@@ -139,9 +147,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     ]
     ++
 
-    [ ((modm              , xK_F12   ), spawn ("amixer set Master on && amixer -q set Master 4%+"))
-    , ((modm              , xK_F11   ), spawn ("amixer set Master on && amixer -q set Master 4%-"))
-    , ((modm              , xK_F10   ), spawn ("amixer -q set Master toggle"))
+    [ ((modm              , xK_F12   ), (runProcessWithInput ("/home/james/.xmonad/volume.sh") ["-u"] "") >>= alert)
+    , ((modm              , xK_F11   ), (runProcessWithInput ("/home/james/.xmonad/volume.sh") ["-d"] "") >>= alert)
+    , ((modm              , xK_F10   ), (runProcessWithInput ("/home/james/.xmonad/volume.sh") ["-m"] "") >>= alert)
     ]++
 
     --

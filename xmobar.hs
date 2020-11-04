@@ -13,7 +13,7 @@ Config { font = "xft:Monaco:size=10:antialias=true"
 	  , Run Com "whoami" [] "" 0
 	  , Run Com "hostname" [] "" 0
 	  , Run Com "/home/james/.xmonad/wifi.sh" [] "wifi" 10
-	  , Run Com "/home/james/.xmonad/volume.sh" [] "volume" 1
+	  , Run Com "/home/james/.xmonad/volume.sh" ["-s"] "volume" 1
     , Run DynNetwork
       [ "--template" , "↑<tx>kB/s|↓<rx>kB/s"
       , "--Low"      , "1000"       -- units: B/s
