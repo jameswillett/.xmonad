@@ -64,10 +64,10 @@ myFocusedBorderColor = "#4570ff"
 alert :: String -> X ()
 alert = dzenConfig centered
   where centered =
-          onCurr (center 300 200)
-          >=> font "-*-helvetica-*-r-*-*-100-*-*-*-*-*-*-*"
-          >=> addArgs ["-fg", "#80c0ff"]
-          >=> addArgs ["-bg", "#000040"]
+          onCurr (center 600 350)
+          >=> font "-*-helvetica-*-r-*-*-200-*-*-*-*-*-*-*"
+          >=> addArgs ["-fg", "#ffd7af"]
+          >=> addArgs ["-bg", "#262626"]
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
 --
@@ -147,10 +147,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     ]
     ++
 
-    [ ((modm              , xK_F12   ), (runProcessWithInput ("/home/james/.xmonad/volume.sh") ["-u"] "") >>= alert)
-    , ((modm              , xK_F11   ), (runProcessWithInput ("/home/james/.xmonad/volume.sh") ["-d"] "") >>= alert)
-    , ((modm              , xK_F10   ), (runProcessWithInput ("/home/james/.xmonad/volume.sh") ["-m"] "") >>= alert)
-    ]++
+    (map (\(keyCode, flag) ->
+      ((0, keyCode), (runProcessWithInput ("/home/james/.xmonad/volume.sh") [flag] "") >>= alert)
+    ) [(0x1008FF13, "-u"), (0x1008FF11, "-d"), (0x1008FF12, "-m")])++
 
     --
     -- mod-[1..9], Switch to workspace N
