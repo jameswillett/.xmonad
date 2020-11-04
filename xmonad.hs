@@ -139,6 +139,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     ]
     ++
 
+    [ ((modm              , xK_F12   ), spawn ("amixer set Master on && amixer -q set Master 4%+"))
+    , ((modm              , xK_F11   ), spawn ("amixer set Master on && amixer -q set Master 4%-"))
+    , ((modm              , xK_F10   ), spawn ("amixer -q set Master toggle"))
+    ]++
+
     --
     -- mod-[1..9], Switch to workspace N
     -- mod-shift-[1..9], Move client to workspace N
@@ -227,7 +232,8 @@ myManageHook = composeAll
     [ className =? "MPlayer"        --> doFloat
     , className =? "Gimp"           --> doFloat
     , resource  =? "desktop_window" --> doIgnore
-    , resource  =? "kdesktop"       --> doIgnore ]
+    , resource  =? "kdesktop"       --> doIgnore
+    ]
 
 ------------------------------------------------------------------------
 -- Event handling
