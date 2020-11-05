@@ -10,11 +10,11 @@ do
   case $OPTION in
     u)
       volupoutput=`amixer set Master on && amixer -q set Master 4%+`
-      echo "$volupoutput" | grep -i "front right: playback" | sed -r 's/.*\[(.*)\%\].+/expr \1 + $(( \1==100 ? 0 : 4 ))/' | sh
+      echo "$volupoutput" | grep -i "front right: playback" | sed -r 's/.*\[(.*)\%\].+/expr \1 + $(( \1==100 ? 0 : 4 ))/' | sh | dbar -l 'volume ' -s x
       ;;
     d)
       voldownoutput=`amixer set Master on && amixer -q set Master 4%-`
-      echo "$voldownoutput" | grep -i "front right: playback" | sed -r 's/.*\[(.*)\%\].+/expr \1 - $(( \1==0 ? 0 : 4 ))/' | sh
+      echo "$voldownoutput" | grep -i "front right: playback" | sed -r 's/.*\[(.*)\%\].+/expr \1 - $(( \1==0 ? 0 : 4 ))/' | sh | dbar -l 'volume ' -s x
       ;;
     m)
       muteoutput=`amixer set Master toggle`
@@ -23,7 +23,7 @@ do
       then
         echo "muted"
       else
-        echo "$percent"
+        echo "$percent" | dbar -l 'volume ' -s x
       fi
       ;;
     s)

@@ -64,8 +64,8 @@ myFocusedBorderColor = "#4570ff"
 alert :: String -> X ()
 alert = dzenConfig centered
   where centered =
-          onCurr (center 600 350)
-          >=> font "-*-helvetica-*-r-*-*-200-*-*-*-*-*-*-*"
+          onCurr (center 600 100)
+          >=> font "-*-helvetica-*-r-*-*-30-*-*-*-*-*-*-*"
           >=> addArgs ["-fg", "#ffd7af"]
           >=> addArgs ["-bg", "#262626"]
 ------------------------------------------------------------------------
