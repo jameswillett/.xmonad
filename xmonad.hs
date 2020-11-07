@@ -24,7 +24,9 @@ import qualified Data.Map        as M
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
 --
-myTerminal      = "kitty"
+
+myTerminal :: String
+myTerminal      = "konsole"
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -64,8 +66,8 @@ myFocusedBorderColor = "#4570ff"
 alert :: String -> X ()
 alert = dzenConfig centered
   where centered =
-          onCurr (center 600 100)
-          >=> font "-*-helvetica-*-r-*-*-30-*-*-*-*-*-*-*"
+          onCurr (center 720 100)
+          >=> font "-*-monospace-*-r-*-*-30-*-*-*-*-*-*-*"
           >=> addArgs ["-fg", "#ffd7af"]
           >=> addArgs ["-bg", "#262626"]
 ------------------------------------------------------------------------
