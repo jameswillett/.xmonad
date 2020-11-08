@@ -1,4 +1,4 @@
-Config { font = "xft:JetBrainsMono Nerd Font:size=10:antialias=true"
+Config { font = "xft:Bitstream Vera Sans Mono:size=10:antialias=true"
 , bgColor = "black"
 , alpha = 170
 , fgColor = "grey"
