@@ -12,6 +12,7 @@ import Data.Monoid
 import System.Exit
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
+import XMonad.Layout.Grid
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spacing
 import XMonad.Util.Dzen
@@ -202,7 +203,10 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- which denotes layout choice.
 --
 myLayout =
-  smartBorders $ (_avoidStruts tiled) ||| Full
+  smartBorders
+  $ ( (avoidStruts $ _spacingRaw 10 $ GridRatio (3/2))
+  ||| (avoidStruts $ _spacingRaw 10 $ tiled)
+  ||| Full)
     where
       -- default tiling algorithm partitions the screen into two panes
       tiled   = Tall nmaster delta ratio
@@ -216,11 +220,9 @@ myLayout =
       -- Percent of screen to increment by when resizing panes
       delta   = 3/100
 
-      px      = 10
-      sb      = Border { top = px, bottom = px, left = px, right = px }
+      sb px   = Border { top = px, bottom = px, left = px, right = px }
 
-      _spacingRaw  = spacingRaw True sb True sb True
-      _avoidStruts = avoidStruts . _spacingRaw
+      _spacingRaw px = spacingRaw True (sb px) True (sb px) True
 
 ------------------------------------------------------------------------
 -- Window rules:
