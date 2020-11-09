@@ -12,7 +12,9 @@ import Data.Monoid
 import System.Exit
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
+-- import XMonad.Layout.SimpleFloat
 import XMonad.Layout.Grid
+import XMonad.Layout.Named
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spacing
 import XMonad.Util.Dzen
@@ -27,7 +29,7 @@ import qualified Data.Map        as M
 --
 
 myTerminal :: String
-myTerminal      = "konsole"
+myTerminal      = "konsole --profile james"
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -61,8 +63,8 @@ myWorkspaces    = map show [1..9]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
-myNormalBorderColor  = "#666666"
-myFocusedBorderColor = "#4570ff"
+myNormalBorderColor  = "#2d3b41"
+myFocusedBorderColor = "#7cac7a"
 
 alert :: String -> X ()
 alert = dzenConfig centered
@@ -143,7 +145,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
 
     -- Restart xmonad
-    , ((modm              , xK_q     ), spawn "~/.xmonad/recompile.sh; xmonad --restart; echo 'recompiled!' | dzen2 -p 1")
+    , ((modm              , xK_q     ), spawn "/home/james/.xmonad/recompile.sh")
 
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
     , ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
@@ -204,9 +206,10 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 --
 myLayout =
   smartBorders
-  $ ( (avoidStruts $ _spacingRaw 10 $ GridRatio (3/2))
-  ||| (avoidStruts $ _spacingRaw 10 $ tiled)
-  ||| Full)
+  $ ( (named "grid" $ avoidStruts $ _spacingRaw 10 $ GridRatio (3/2))
+  -- ||| (avoidStruts $ simpleFloat)
+  ||| (named "tall" $ avoidStruts $ _spacingRaw 10 $ tiled)
+  ||| named "full" Full)
     where
       -- default tiling algorithm partitions the screen into two panes
       tiled   = Tall nmaster delta ratio
@@ -264,11 +267,11 @@ myEventHook = mempty
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 --
 myLogHook h = dynamicLogWithPP $ def
-  { ppLayout = const ""  -- Don't show the layout name
+  { ppLayout = wrap "(<fc=#e4b63c>" "</fc>)"
   -- , ppSort = getSortByXineramaRule  -- Sort left/right screens on the left, non-empty workspaces after those
-  , ppTitle = id  -- Don't show the focused window's title
   , ppTitleSanitize = const ""  -- Also about window's title
   , ppVisible = wrap "(" ")"  -- Non-focused (but still visible) screen
+  , ppCurrent = wrap "<fc=#b8473d>[</fc><fc=#7cac7a>" "</fc><fc=#b8473d>]</fc>"-- Non-focused (but still visible) screen
   , ppOutput = hPutStrLn h
   }
 

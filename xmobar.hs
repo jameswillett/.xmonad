@@ -15,7 +15,7 @@ Config { font = "xft:Bitstream Vera Sans Mono:size=10:antialias=true"
 	  , Run Com "/home/james/.xmonad/wifi.sh" [] "wifi" 10
 	  , Run Com "/home/james/.xmonad/volume.sh" ["-s"] "volume" 1
     , Run DynNetwork
-      [ "--template" , "↑<tx>kB/s|↓<rx>kB/s"
+      [ "--template" , "↑<tx>kB/s ↓<rx>kB/s"
       , "--Low"      , "1000"       -- units: B/s
       , "--High"     , "5000"       -- units: B/s
       , "--low"      , "green"
@@ -25,7 +25,7 @@ Config { font = "xft:Bitstream Vera Sans Mono:size=10:antialias=true"
 
         -- cpu activity monitor
     , Run MultiCpu 
-      [ "--template" , "Cpu: <total0>%|<total1>%"
+      [ "--template" , "Cpu: [<total0>, <total1>, <total2>, <total3>]%"
       , "--Low"      , "50"         -- units: %
       , "--High"     , "85"         -- units: %
       , "--low"      , "green"
@@ -35,7 +35,7 @@ Config { font = "xft:Bitstream Vera Sans Mono:size=10:antialias=true"
 
         -- cpu core temperature monitor
     , Run CoreTemp
-      [ "--template" , "Temp: <core0>°C|<core1>°C"
+      [ "--template" , "Temp: [<core0>, <core1>, <core2>, <core3>]°C"
       , "--Low"      , "70"        -- units: °C
       , "--High"     , "80"        -- units: °C
       , "--low"      , "green"
