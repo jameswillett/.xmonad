@@ -149,6 +149,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
     , ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
+
+    , ((0                 , 0x1008FF81 ), spawn "import ~/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png")
     ]
     ++
 
