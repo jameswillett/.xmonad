@@ -67,9 +67,11 @@ myNormalBorderColor  = "#2d3b41"
 myFocusedBorderColor = "#7cac7a"
 
 alert :: String -> X ()
-alert = dzenConfig centered
-  where centered =
-          onCurr (center 720 100)
+alert message = dzenConfig centered message
+  where
+    windowW = (*20) $ length message
+    centered =
+          onCurr (center windowW 100)
           >=> font "-*-monospace-*-r-*-*-30-*-*-*-*-*-*-*"
           >=> addArgs ["-fg", "#ffd7af"]
           >=> addArgs ["-bg", "#262626"]
@@ -150,7 +152,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
     , ((modm .|. controlMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
 
-    , ((0                 , 0x1008FF81 ), spawn "import ~/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png")
+    , ((0, 0x1008FF81 ), spawn "import ~/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png")
     ]
     ++
 
