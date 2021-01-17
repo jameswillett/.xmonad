@@ -1,7 +1,7 @@
 Config { font = "xft:Bitstream Vera Sans Mono:size=10:antialias=true"
 , bgColor = "black"
-, alpha = 170
-, fgColor = "grey"
+, alpha = 150
+, fgColor = "#7CAC7A"
 , position = Top
 , lowerOnStart = True
 , commands =
