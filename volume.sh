@@ -1,9 +1,8 @@
 #!/bin/bash
 
-      device=`amixer | grep -i "front right: playback"` 
-      percent=`echo "$device" | sed -r 's/.*\[(.*)\%\].+/\1/'`
-      dstatus=`echo "$device" | sed -r 's/.*\[(.*)\]/\1/'`
-      
+device=`amixer | grep -i "front right: playback"` 
+percent=`echo "$device" | sed -r 's/.*\[(.*)\%\].+/\1/'`
+dstatus=`echo "$device" | sed -r 's/.*\[(.*)\]/\1/'`
 
 while getopts "udms" OPTION
 do
