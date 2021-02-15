@@ -8,14 +8,17 @@ while getopts "udms" OPTION
 do
   case $OPTION in
     u)
+      `pkill -f dzen`
       volupoutput=`amixer set Master on && amixer -q set Master 4%+`
       echo "$volupoutput" | grep -i "front right: playback" | sed -r 's/.*\[(.*)\%\].+/expr \1 + $(( \1==100 ? 0 : 4 ))/' | sh | dbar -l 'volume ' -s x
       ;;
     d)
+      `pkill -f dzen`
       voldownoutput=`amixer set Master on && amixer -q set Master 4%-`
       echo "$voldownoutput" | grep -i "front right: playback" | sed -r 's/.*\[(.*)\%\].+/expr \1 - $(( \1==0 ? 0 : 4 ))/' | sh | dbar -l 'volume ' -s x
       ;;
     m)
+      `pkill -f dzen`
       muteoutput=`amixer set Master toggle`
       onoroff=`echo "$muteoutput" | grep -i "front right: playback" | sed -r 's/.*\[(.*)\]/\1/'`
       if [[ $onoroff == "off" ]]
