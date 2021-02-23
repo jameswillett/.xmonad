@@ -6,14 +6,14 @@ Config { font = "xft:Bitstream Vera Sans Mono:size=10:antialias=true"
 , lowerOnStart = True
 , commands =
     [ Run Date "%a %b %d %H:%M:%S" "date" 10
-	  , Run Weather "KMTN"
+    , Run Weather "KMTN"
       [ "--template"
       , "<station>: <skyCondition> <fc=#4682B4><tempF></fc>°F <fc=#4682B4><rh></fc>%"
       ] 36000
-	  , Run Com "whoami" [] "" 0
-	  , Run Com "hostname" [] "" 0
-	  , Run Com "/home/james/.xmonad/wifi.sh" [] "wifi" 10
-	  , Run Com "/home/james/.xmonad/volume.sh" ["-s"] "volume" 1
+    , Run Com "whoami" [] "" 0
+    , Run Com "hostname" [] "" 0
+    , Run Com "/home/james/.xmonad/wifi.sh" [] "wifi" 10
+    , Run Com "/home/james/.xmonad/volume.sh" ["-s"] "volume" 1
     , Run DynNetwork
       [ "--template" , "↑<tx>kB/s ↓<rx>kB/s"
       , "--Low"      , "1000"       -- units: B/s
@@ -23,7 +23,7 @@ Config { font = "xft:Bitstream Vera Sans Mono:size=10:antialias=true"
       , "--high"     , "red"
       ] 10
 
-        -- cpu activity monitor
+    -- cpu activity monitor
     , Run MultiCpu 
       [ "--template" , "Cpu: [<total0>, <total1>, <total2>, <total3>]%"
       , "--Low"      , "50"         -- units: %
@@ -33,7 +33,7 @@ Config { font = "xft:Bitstream Vera Sans Mono:size=10:antialias=true"
       , "--high"     , "red"
       ] 10
 
-        -- cpu core temperature monitor
+    -- cpu core temperature monitor
     , Run CoreTemp
       [ "--template" , "Temp: [<core0>, <core1>, <core2>, <core3>]°C"
       , "--Low"      , "70"        -- units: °C
@@ -42,8 +42,8 @@ Config { font = "xft:Bitstream Vera Sans Mono:size=10:antialias=true"
       , "--normal"   , "orange"
       , "--high"     , "red"
       ] 50
-                          
-        -- memory usage monitor
+
+    -- memory usage monitor
     , Run Memory
       [ "--template" ,"Mem: <usedratio>%"
       , "--Low"      , "20"        -- units: %
