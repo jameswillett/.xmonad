@@ -20,6 +20,7 @@ import XMonad.Layout.Spacing
 import XMonad.Util.Dzen
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
+import XMonad.Actions.CycleWS
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
@@ -78,25 +79,35 @@ alert message = dzenConfig centered message
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
 --
+
+-- for my ergodox the mod keys are as follows
+-- modm bottom left thumb
+-- modm2 bottom right thumb
+-- modm3 top left thumb
+-- modm4 top right thumb
+modm2 = myModMask .|. controlMask
+modm3 = myModMask .|. mod4Mask
+modm4 = modm3 .|. controlMask
+
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- launch a terminal
-    [ ((modm .|. controlMask, xK_Return), spawn $ XMonad.terminal conf)
+    [ ((modm2, xK_Return), spawn $ XMonad.terminal conf)
 
     -- launch dmenu
-    , ((modm,               xK_p     ), spawn "dmenu_run")
+    , ((modm3, xK_l     ), spawn "dmenu_run")
 
     -- launch gmrun
-    , ((modm .|. controlMask, xK_p     ), spawn "gmrun")
+    , ((modm3, xK_r     ), spawn "gmrun")
 
     -- close focused window
-    , ((modm .|. controlMask, xK_c     ), kill)
+    , ((modm2, xK_c     ), kill)
 
      -- Rotate through the available layout algorithms
     , ((modm,               xK_space ), sendMessage NextLayout)
 
     --  Reset the layouts on the current workspace to default
-    , ((modm .|. controlMask, xK_space ), setLayout $ XMonad.layoutHook conf)
+    , ((modm2, xK_space ), setLayout $ XMonad.layoutHook conf)
 
     -- Resize viewed windows to the correct size
     , ((modm,               xK_n     ), refresh)
@@ -117,10 +128,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_Return), windows W.swapMaster)
 
     -- Swap the focused window with the next window
-    , ((modm .|. controlMask, xK_j     ), windows W.swapDown  )
+    , ((modm2, xK_j     ), windows W.swapDown  )
 
     -- Swap the focused window with the previous window
-    , ((modm .|. controlMask, xK_k     ), windows W.swapUp    )
+    , ((modm2, xK_k     ), windows W.swapUp    )
 
     -- Shrink the master area
     , ((modm,               xK_h     ), sendMessage Shrink)
@@ -144,15 +155,18 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- , ((modm              , xK_b     ), sendMessage ToggleStruts)
 
     -- Quit xmonad
-    , ((modm .|. controlMask, xK_q     ), io (exitWith ExitSuccess))
+    , ((modm2, xK_q     ), io (exitWith ExitSuccess))
 
     -- Restart xmonad
     , ((modm              , xK_q     ), spawn "/home/james/.xmonad/recompile.sh")
 
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
-    , ((modm .|. controlMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
+    , ((modm2, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
 
     , ((0, 0x1008FF81 ), spawn "import ~/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png")
+
+    , ((shiftMask .|. controlMask, xK_l), nextWS)
+    , ((shiftMask .|. controlMask, xK_h), prevWS)
     ]
     ++
 
