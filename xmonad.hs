@@ -21,16 +21,20 @@ import XMonad.Util.Dzen
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
 import XMonad.Actions.CycleWS
+import XMonad.ManageHook
+import XMonad.Util.NamedScratchpad
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
---
 
 myTerminal :: String
 myTerminal      = "konsole --profile james"
+--
+scratchpads = [ NS "htop" "konsole -name htop -e htop" (resource =? "htop") (customFloating $ W.RationalRect (2/6) (2/6) (2/6) (2/6)) ]
+
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -167,6 +171,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     , ((shiftMask .|. controlMask, xK_l), nextWS)
     , ((shiftMask .|. controlMask, xK_h), prevWS)
+    , ((modm3, xK_t), namedScratchpadAction scratchpads "htop")
     ]
     ++
 
@@ -265,6 +270,7 @@ myManageHook = composeAll
     , className =? "Gimp"           --> doFloat
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "kdesktop"       --> doIgnore
+    , namedScratchpadManageHook scratchpads
     ]
 
 ------------------------------------------------------------------------
