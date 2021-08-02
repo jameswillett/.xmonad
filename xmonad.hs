@@ -33,7 +33,10 @@ import qualified Data.Map        as M
 myTerminal :: String
 myTerminal      = "konsole --profile james"
 --
-scratchpads = [ NS "htop" "konsole -name htop -e htop" (resource =? "htop") (customFloating $ W.RationalRect (2/6) (2/6) (2/6) (2/6)) ]
+scratchpads =
+  [ NS "htop" "konsole -name htop -e htop" (resource =? "htop") (customFloating $ W.RationalRect (2/6) (2/6) (2/6) (2/6))
+  , NS "1password" "1password" (resource=? "1password") (customFloating $ W.RationalRect (2/6) (2/6) (2/6) (2/6))
+  ]
 
 
 -- Whether focus follows the mouse pointer.
@@ -172,6 +175,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((shiftMask .|. controlMask, xK_l), nextWS)
     , ((shiftMask .|. controlMask, xK_h), prevWS)
     , ((modm3, xK_t), namedScratchpadAction scratchpads "htop")
+    , ((modm3, xK_p), namedScratchpadAction scratchpads "1password")
     ]
     ++
 
