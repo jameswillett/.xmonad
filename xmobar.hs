@@ -25,7 +25,7 @@ Config { font = "xft:Bitstream Vera Sans Mono:size=10:antialias=true"
 
     -- cpu activity monitor
     , Run MultiCpu 
-      [ "--template" , "Cpu: [<total0>, <total1>, <total2>, <total3>]%"
+      [ "--template" , "Cpu: [<total0>, <total1>, <total2>, <total3>, <total4>, <total5>, <total6>, <total7>]%"
       , "--Low"      , "50"         -- units: %
       , "--High"     , "85"         -- units: %
       , "--low"      , "green"
@@ -34,8 +34,8 @@ Config { font = "xft:Bitstream Vera Sans Mono:size=10:antialias=true"
       ] 10
 
     -- cpu core temperature monitor
-    , Run CoreTemp
-      [ "--template" , "Temp: [<core0>, <core1>, <core2>, <core3>]°C"
+    , Run MultiCoreTemp
+      [ "-t" , "Temp: <core0>°C"
       , "--Low"      , "70"        -- units: °C
       , "--High"     , "80"        -- units: °C
       , "--low"      , "green"
@@ -56,5 +56,5 @@ Config { font = "xft:Bitstream Vera Sans Mono:size=10:antialias=true"
     ]
 , sepChar = "%"
 , alignSep = "}{"
-, template = "%whoami%@%hostname% >>= %StdinReader% %multicpu% %coretemp% %memory% }{[vol: %volume%] %dynnetwork% %wifi% | %KMTN% <fc=#49E20E>%date%</fc> "
+, template = "%whoami%@%hostname% >>= %StdinReader% %multicpu% %multicoretemp% %memory% }{[vol: %volume%] %dynnetwork% %wifi% | %KMTN% <fc=#49E20E>%date%</fc> "
 }

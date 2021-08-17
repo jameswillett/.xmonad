@@ -33,9 +33,10 @@ import qualified Data.Map        as M
 myTerminal :: String
 myTerminal      = "konsole --profile james"
 --
+floatRectBig = customFloating $ W.RationalRect (2/6) (1/6) (2/6) (4/6)
 scratchpads =
-  [ NS "htop" "konsole -name htop -e htop" (resource =? "htop") (customFloating $ W.RationalRect (2/6) (2/6) (2/6) (2/6))
-  , NS "1password" "1password" (resource=? "1password") (customFloating $ W.RationalRect (2/6) (2/6) (2/6) (2/6))
+  [ NS "bpytop" "konsole -name bpytop -e bpytop" (resource =? "bpytop") floatRectBig
+  , NS "1password" "1password" (resource=? "1password") floatRectBig
   ]
 
 
@@ -174,7 +175,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     , ((shiftMask .|. controlMask, xK_l), nextWS)
     , ((shiftMask .|. controlMask, xK_h), prevWS)
-    , ((modm3, xK_t), namedScratchpadAction scratchpads "htop")
+    , ((modm3, xK_t), namedScratchpadAction scratchpads "bpytop")
     , ((modm3, xK_p), namedScratchpadAction scratchpads "1password")
     ]
     ++
