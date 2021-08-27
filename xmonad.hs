@@ -35,7 +35,7 @@ myTerminal      = "konsole --profile james"
 --
 floatRectBig = customFloating $ W.RationalRect (2/6) (1/6) (2/6) (4/6)
 scratchpads =
-  [ NS "bpytop" "konsole -name bpytop -e bpytop" (resource =? "bpytop") floatRectBig
+  [ NS "bpytop" "konsole --profile terminus -name bpytop -e bpytop" (resource =? "bpytop") floatRectBig
   , NS "1password" "1password" (resource=? "1password") floatRectBig
   ]
 
@@ -313,6 +313,7 @@ myLogHook h = dynamicLogWithPP $ def
 --
 -- By default, do nothing.
 myStartupHook = do
+  spawnOnce "~/.xmonad/initxmonad.sh &"
   spawnOnce "nitrogen --restore &"
   spawnOnce "picom &"
   
