@@ -34,9 +34,11 @@ myTerminal :: String
 myTerminal      = "kitty"
 --
 floatRectBig = customFloating $ W.RationalRect (2/6) (1/6) (2/6) (4/6)
+floatRectSmol = customFloating $ W.RationalRect (2/12) (1/12) (2/12) (3/12)
 scratchpads =
   [ NS "btop" "konsole --profile terminus -name btop -e btop" (resource =? "btop") floatRectBig
   , NS "1password" "1password" (resource=? "1password") floatRectBig
+  , NS "gmrun" "gmrun" (resource=? "gmrun") floatRectSmol
   ]
 
 
@@ -106,7 +108,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm3, xK_l     ), spawn "dmenu_run")
 
     -- launch gmrun
-    , ((modm3, xK_r     ), spawn "gmrun")
+    , ((modm3, xK_r     ),  namedScratchpadAction scratchpads "gmrun")
 
     -- close focused window
     , ((modm2, xK_c     ), kill)
