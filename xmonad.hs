@@ -31,11 +31,11 @@ import qualified Data.Map        as M
 -- certain contrib modules.
 
 myTerminal :: String
-myTerminal      = "konsole --profile james"
+myTerminal      = "kitty"
 --
 floatRectBig = customFloating $ W.RationalRect (2/6) (1/6) (2/6) (4/6)
 scratchpads =
-  [ NS "bpytop" "konsole --profile terminus -name bpytop -e bpytop" (resource =? "bpytop") floatRectBig
+  [ NS "btop" "konsole --profile terminus -name btop -e btop" (resource =? "btop") floatRectBig
   , NS "1password" "1password" (resource=? "1password") floatRectBig
   ]
 
@@ -175,7 +175,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     , ((shiftMask .|. controlMask, xK_l), nextWS)
     , ((shiftMask .|. controlMask, xK_h), prevWS)
-    , ((modm3, xK_t), namedScratchpadAction scratchpads "bpytop")
+    , ((modm3, xK_t), namedScratchpadAction scratchpads "btop")
     , ((modm3, xK_p), namedScratchpadAction scratchpads "1password")
     ]
     ++
@@ -314,6 +314,7 @@ myLogHook h = dynamicLogWithPP $ def
 -- By default, do nothing.
 myStartupHook = do
   spawnOnce "~/.xmonad/initxmonad.sh &"
+  spawnOnce "~/.xmonad/setupMonitors.sh &"
   spawnOnce "nitrogen --restore &"
   spawnOnce "picom &"
   
