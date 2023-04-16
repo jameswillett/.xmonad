@@ -142,6 +142,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm2, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
 
     , ((modm3, xK_3 ), spawn "import ~/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png")
+    , ((modm4, xK_s ), spawn "systemctl suspend; betterlockscreen -l")
 
     , ((shiftMask .|. controlMask, xK_l), nextWS)
     , ((shiftMask .|. controlMask, xK_h), prevWS)
