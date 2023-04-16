@@ -12,11 +12,11 @@ import Data.Monoid
 import System.Exit
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
--- import XMonad.Layout.SimpleFloat
 import XMonad.Layout.Grid
 import XMonad.Layout.Named
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spacing
+import XMonad.Util.Cursor
 import XMonad.Util.Dzen
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
@@ -27,32 +27,13 @@ import XMonad.Util.NamedScratchpad
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
--- The preferred terminal program, which is used in a binding below and by
--- certain contrib modules.
-
-myTerminal :: String
-myTerminal      = "kitty"
---
 floatRectBig = customFloating $ W.RationalRect (2/6) (1/6) (2/6) (4/6)
 floatRectSmol = customFloating $ W.RationalRect (2/12) (1/12) (2/12) (3/12)
 scratchpads =
-  [ NS "btop" "konsole --profile terminus -name btop -e btop" (resource =? "btop") floatRectBig
-  , NS "1password" "1password" (resource=? "1password") floatRectBig
-  , NS "gmrun" "gmrun" (resource=? "gmrun") floatRectSmol
+  [ NS "btop"      "kitty --name btop btop" (resource=? "btop"     ) floatRectBig
+  , NS "1password" "1password"              (resource=? "1password") floatRectBig
+  , NS "emote"     "emote"                  (resource=? "emote"    ) floatRectSmol
   ]
-
-
--- Whether focus follows the mouse pointer.
-myFocusFollowsMouse :: Bool
-myFocusFollowsMouse = True
-
--- Whether clicking on a window to focus also passes the click to the window
-myClickJustFocuses :: Bool
-myClickJustFocuses = False
-
--- Width of the window border in pixels.
---
-myBorderWidth   = 6
 
 -- modMask lets you specify which modkey you want to use. The default
 -- is mod1Mask ("left alt").  You may also consider using mod3Mask
@@ -60,22 +41,6 @@ myBorderWidth   = 6
 -- "windows key" is usually mod4Mask.
 --
 myModMask       = mod1Mask .|. shiftMask
-
--- The default number of workspaces (virtual screens) and their names.
--- By default we use numeric strings, but any string may be used as a
--- workspace name. The number of workspaces is determined by the length
--- of this list.
---
--- A tagging example:
---
--- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
---
-myWorkspaces    = map show [1..9]
-
--- Border colors for unfocused and focused windows, respectively.
---
-myNormalBorderColor  = "#2d3b41"
-myFocusedBorderColor = "#7cac7a"
 
 alert :: String -> X ()
 alert message = dzenConfig centered message
@@ -86,6 +51,15 @@ alert message = dzenConfig centered message
           >=> font "-*-monospace-*-r-*-*-30-*-*-*-*-*-*-*"
           >=> addArgs ["-fg", "#ffd7af"]
           >=> addArgs ["-bg", "#262626"]
+
+data RofiMode = Drun | Run
+rofi :: RofiMode -> String
+rofi mode = "rofi -show " ++ _mode
+  where
+    _mode = case mode of
+              Drun -> "drun"
+              Run  -> "run"
+
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
 --
@@ -104,11 +78,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- launch a terminal
     [ ((modm2, xK_Return), spawn $ XMonad.terminal conf)
 
-    -- launch dmenu
-    , ((modm3, xK_l     ), spawn "dmenu_run")
+    , ((modm3, xK_l     ), spawn $ rofi Drun)
 
-    -- launch gmrun
-    , ((modm3, xK_r     ),  namedScratchpadAction scratchpads "gmrun")
+    , ((modm3, xK_r     ), spawn $ rofi Run)
+
+    , ((modm3, xK_e     ), spawn "emote")
 
     -- close focused window
     , ((modm2, xK_c     ), kill)
@@ -158,14 +132,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Deincrement the number of windows in the master area
     , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
 
-    -- Toggle the status bar gap
-    -- Use this binding with avoidStruts from Hooks.ManageDocks.
-    -- See also the statusBar function from Hooks.DynamicLog.
-    --
-    -- , ((modm              , xK_b     ), sendMessage ToggleStruts)
-
     -- Quit xmonad
-    , ((modm2, xK_q     ), io (exitWith ExitSuccess))
+    , ((modm2, xK_q     ), io exitSuccess)
 
     -- Restart xmonad
     , ((modm              , xK_q     ), spawn "/home/james/.xmonad/recompile.sh")
@@ -173,18 +141,19 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
     , ((modm2, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
 
-    , ((0, 0x1008FF81 ), spawn "import ~/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png")
+    , ((modm3, xK_3 ), spawn "import ~/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png")
 
     , ((shiftMask .|. controlMask, xK_l), nextWS)
     , ((shiftMask .|. controlMask, xK_h), prevWS)
     , ((modm3, xK_t), namedScratchpadAction scratchpads "btop")
     , ((modm3, xK_p), namedScratchpadAction scratchpads "1password")
+    , ((modm3, xK_e), namedScratchpadAction scratchpads "emote")
     ]
     ++
 
-    (map (\(keyCode, flag) ->
-      ((0, keyCode), (runProcessWithInput ("/home/james/.xmonad/volume.sh") [flag] "") >>= alert)
-    ) [(0x1008FF13, "-u"), (0x1008FF11, "-d"), (0x1008FF12, "-m")])++
+    map (\(keyCode, flag) ->
+      ((0, keyCode), runProcessWithInput "/home/james/.xmonad/volume.sh" [flag] "" >>= alert)
+    ) [(0x1008FF13, "-u"), (0x1008FF11, "-d"), (0x1008FF12, "-m")]++
 
     --
     -- mod-[1..9], Switch to workspace N
@@ -207,18 +176,18 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 ------------------------------------------------------------------------
 -- Mouse bindings: default actions bound to mouse events
 --
-myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
+myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList
 
     -- mod-button1, Set the window to floating mode and move by dragging
-    [ ((modm, button1), (\w -> focus w >> mouseMoveWindow w
-                                       >> windows W.shiftMaster))
+    [ ((modm, button1), \w -> focus w >> mouseMoveWindow w
+                                       >> windows W.shiftMaster)
 
     -- mod-button2, Raise the window to the top of the stack
-    , ((modm, button2), (\w -> focus w >> windows W.shiftMaster))
+    , ((modm, button2), \w -> focus w >> windows W.shiftMaster)
 
     -- mod-button3, Set the window to floating mode and resize by dragging
-    , ((modm, button3), (\w -> focus w >> mouseResizeWindow w
-                                       >> windows W.shiftMaster))
+    , ((modm, button3), \w -> focus w >> mouseResizeWindow w
+                                       >> windows W.shiftMaster)
 
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
@@ -236,10 +205,11 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 --
 myLayout =
   smartBorders
-  $ ( (named "grid" $ avoidStruts $ _spacingRaw 10 $ GridRatio (3/2))
-  -- ||| (avoidStruts $ simpleFloat)
-  ||| (named "tall" $ avoidStruts $ _spacingRaw 10 $ tiled)
-  ||| named "full" Full)
+  (    named "grid"   (avoidStruts $ _spacingRaw 10 $ GridRatio (3/2))
+  |||  named "tall"   (avoidStruts $ _spacingRaw 10 tiled)
+  |||  named "fullb"  (avoidStruts $ _spacingRaw 10 Full)
+  |||  named "full"   (noBorders Full)
+  )
     where
       -- default tiling algorithm partitions the screen into two panes
       tiled   = Tall nmaster delta ratio
@@ -255,7 +225,7 @@ myLayout =
 
       sb px   = Border { top = px, bottom = px, left = px, right = px }
 
-      _spacingRaw px = spacingRaw True (sb px) True (sb px) True
+      _spacingRaw px = spacingRaw False (sb px) True (sb px) True
 
 ------------------------------------------------------------------------
 -- Window rules:
@@ -275,6 +245,7 @@ myLayout =
 myManageHook = composeAll
     [ className =? "MPlayer"        --> doFloat
     , className =? "Gimp"           --> doFloat
+    , resource  =? "btop"           --> doFloat
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "kdesktop"       --> doIgnore
     , namedScratchpadManageHook scratchpads
@@ -297,13 +268,20 @@ myEventHook = mempty
 -- Perform an arbitrary action on each internal state change or X event.
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 --
-myLogHook h = dynamicLogWithPP $ def
-  { ppLayout = wrap "(<fc=#e4b63c>" "</fc>)"
-  -- , ppSort = getSortByXineramaRule  -- Sort left/right screens on the left, non-empty workspaces after those
-  , ppTitleSanitize = const ""  -- Also about window's title
-  , ppVisible = wrap "(" ")"  -- Non-focused (but still visible) screen
-  , ppCurrent = wrap "<fc=#b8473d>[</fc><fc=#7cac7a>" "</fc><fc=#b8473d>]</fc>"-- Non-focused (but still visible) screen
-  , ppOutput = hPutStrLn h
+clampLength :: Int -> String -> String
+clampLength n string = clamped ++ (if string /= clamped then ellipses else "")
+  where
+    ellipses = "..."
+    breakpoint = n - 4
+    clamped = take breakpoint string
+
+
+myLogHook handle = dynamicLogWithPP $ def
+  { ppLayout  = wrap "(<fc=#e4b63c>"                  "</fc>)"
+  , ppTitle   = wrap "<fc=#cccccc>"                   "</fc>" . clampLength 128
+  , ppVisible = wrap "("                              ")"
+  , ppCurrent = wrap "<fc=#b8473d>[</fc><fc=#7cac7a>" "</fc><fc=#b8473d>]</fc>"
+  , ppOutput  = hPutStrLn handle
   }
 
 ------------------------------------------------------------------------
@@ -315,11 +293,12 @@ myLogHook h = dynamicLogWithPP $ def
 --
 -- By default, do nothing.
 myStartupHook = do
+  setDefaultCursor xC_left_ptr
   spawnOnce "~/.xmonad/initxmonad.sh &"
   spawnOnce "~/.xmonad/setupMonitors.sh &"
   spawnOnce "nitrogen --restore &"
   spawnOnce "picom &"
-  
+
 
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.
@@ -330,14 +309,14 @@ main = do
   xmobarProc <- spawnPipe "xmobar -x 0 /home/james/.xmonad/xmobar.hs"
   xmonad $ docks $ def {
       -- simple stuff
-        terminal           = myTerminal,
-        focusFollowsMouse  = myFocusFollowsMouse,
-        clickJustFocuses   = myClickJustFocuses,
-        borderWidth        = myBorderWidth,
+        terminal           = "kitty",
+        focusFollowsMouse  = True,
+        clickJustFocuses   = False,
+        borderWidth        = 6,
         modMask            = myModMask,
-        workspaces         = myWorkspaces,
-        normalBorderColor  = myNormalBorderColor,
-        focusedBorderColor = myFocusedBorderColor,
+        workspaces         = map show [1..9],
+        normalBorderColor  = "#2d3b41",
+        focusedBorderColor = "#7cac7a",
 
       -- key bindings
         keys               = myKeys,
