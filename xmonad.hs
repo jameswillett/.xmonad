@@ -11,6 +11,7 @@ import XMonad
 import Data.Monoid
 import System.Exit
 import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.ManageDocks
 import XMonad.Layout.Grid
 import XMonad.Layout.Named
@@ -57,11 +58,12 @@ alert message = dzenConfig centered message
 
 data RofiMode = Drun | Run
 rofi :: RofiMode -> String
-rofi mode = "rofi -show " ++ _mode
+rofi mode = "rofi" ++ combi ++ " -show " ++ _mode ++ " -show-icons"
   where
-    _mode = case mode of
-              Drun -> "drun"
-              Run  -> "run"
+    (combi, _mode) =
+      case mode of
+        Drun -> (" -combi-modi window,drun", "combi")
+        Run  -> ("", "run")
 
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
@@ -307,7 +309,7 @@ myStartupHook = do
 --
 main = do
   xmobarProc <- spawnPipe ("xmobar -x 0 " ++ xmonadDir ++ "/xmobar.hs")
-  xmonad $ docks $ def {
+  xmonad $ docks $ ewmh def {
       -- simple stuff
         terminal           = "kitty",
         focusFollowsMouse  = True,
