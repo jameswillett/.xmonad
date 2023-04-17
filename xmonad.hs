@@ -50,11 +50,10 @@ alert :: String -> X ()
 alert message = dzenConfig centered message
   where
     windowW = (*20) $ length message
-    centered =
-          onCurr (center windowW 100)
-          >=> font "-*-monospace-*-r-*-*-30-*-*-*-*-*-*-*"
-          >=> addArgs ["-fg", "#ffd7af"]
-          >=> addArgs ["-bg", "#262626"]
+    centered = center windowW 100 0
+      >=> font "-*-monospace-*-r-*-*-30-*-*-*-*-*-*-*"
+      >=> addArgs ["-fg", "#ffd7af"]
+      >=> addArgs ["-bg", "#262626"]
 
 data RofiMode = Drun | Run | Emoji
 rofi :: RofiMode -> String
