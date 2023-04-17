@@ -225,7 +225,7 @@ myLayout =
       -- (7/4) resolves to a 2x2 grid on ultrawide monitors.
       -- might need to change to (3/2) for normaler aspect ratios
       grid      = GridRatio (7/4)
-      tiled     = Tall 1 (3 / 100) (5/12)
+      tiled     = Tall 1 (3 / 100) (2/3)
 
       sb          px = Border { top = px, bottom = px, left = px, right = px }
       _spacingRaw px = spacingRaw False (sb px) True (sb px) True
