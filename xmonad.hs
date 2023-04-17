@@ -27,6 +27,9 @@ import XMonad.Util.NamedScratchpad
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
+home = "/home/james"
+xmonadDir = home ++ "/.xmonad"
+
 floatRectBig = customFloating $ W.RationalRect (2/6) (1/6) (2/6) (4/6)
 floatRectSmol = customFloating $ W.RationalRect (2/12) (1/12) (2/12) (3/12)
 scratchpads =
@@ -74,7 +77,6 @@ modm3 = myModMask .|. mod4Mask
 modm4 = modm3 .|. controlMask
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
-
     -- launch a terminal
     [ ((modm2, xK_Return), spawn $ XMonad.terminal conf)
 
@@ -87,8 +89,12 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- close focused window
     , ((modm2, xK_c     ), kill)
 
-     -- Rotate through the available layout algorithms
+    -- Rotate through the available layout algorithms
     , ((modm,               xK_space ), sendMessage NextLayout)
+
+    -- jump to full/grid
+    , ((modm4, xK_f), sendMessage $ JumpToLayout "full")
+    , ((modm4, xK_g), sendMessage $ JumpToLayout "grid")
 
     --  Reset the layouts on the current workspace to default
     , ((modm2, xK_space ), setLayout $ XMonad.layoutHook conf)
@@ -136,12 +142,12 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm2, xK_q     ), io exitSuccess)
 
     -- Restart xmonad
-    , ((modm              , xK_q     ), spawn "/home/james/.xmonad/recompile.sh")
+    , ((modm              , xK_q     ), spawn $ xmonadDir ++ "/recompile.sh")
 
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
     , ((modm2, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
 
-    , ((modm3, xK_3 ), spawn "import ~/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png")
+    , ((modm3, xK_3 ), spawn ("import " ++ home ++ "/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png"))
     , ((modm4, xK_s ), spawn "systemctl suspend; betterlockscreen -l")
 
     , ((shiftMask .|. controlMask, xK_l), nextWS)
@@ -153,7 +159,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     ++
 
     map (\(keyCode, flag) ->
-      ((0, keyCode), runProcessWithInput "/home/james/.xmonad/volume.sh" [flag] "" >>= alert)
+      ((0, keyCode), runProcessWithInput (xmonadDir ++ "/volume.sh") [flag] "" >>= alert)
     ) [(0x1008FF13, "-u"), (0x1008FF11, "-d"), (0x1008FF12, "-m")]++
 
     --
@@ -206,26 +212,20 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList
 --
 myLayout =
   smartBorders
-  (    named "grid"   (avoidStruts $ _spacingRaw 10 $ GridRatio (3/2))
-  |||  named "tall"   (avoidStruts $ _spacingRaw 10 tiled)
-  |||  named "fullb"  (avoidStruts $ _spacingRaw 10 Full)
-  |||  named "full"   (noBorders Full)
+  (   named "grid"   (withGap grid)
+  ||| named "tall"   (withGap tiled)
+  ||| named "fullg"  (withGap $ noBorders Full)
+  ||| named "full"   (noBorders Full)
   )
     where
-      -- default tiling algorithm partitions the screen into two panes
-      tiled   = Tall nmaster delta ratio
+      withGap l = avoidStruts $ _spacingRaw 10 l
 
-      -- The default number of windows in the master pane
-      nmaster = 1
+      -- (7/4) resolves to a 2x2 grid on ultrawide monitors.
+      -- might need to change to (3/2) for normaler aspect ratios
+      grid      = GridRatio (7/4)
+      tiled     = Tall 1 (3 / 100) (5/12)
 
-      -- Default proportion of screen occupied by master pane
-      ratio   = 1/2
-
-      -- Percent of screen to increment by when resizing panes
-      delta   = 3/100
-
-      sb px   = Border { top = px, bottom = px, left = px, right = px }
-
+      sb          px = Border { top = px, bottom = px, left = px, right = px }
       _spacingRaw px = spacingRaw False (sb px) True (sb px) True
 
 ------------------------------------------------------------------------
@@ -295,10 +295,9 @@ myLogHook handle = dynamicLogWithPP $ def
 -- By default, do nothing.
 myStartupHook = do
   setDefaultCursor xC_left_ptr
-  spawnOnce "~/.xmonad/initxmonad.sh &"
-  spawnOnce "~/.xmonad/setupMonitors.sh &"
+  spawnOnce $ xmonadDir ++ "/initxmonad.sh &"
+  spawnOnce $ xmonadDir ++ "/setupMonitors.sh &"
   spawnOnce "nitrogen --restore &"
-  spawnOnce "picom &"
 
 
 ------------------------------------------------------------------------
@@ -307,7 +306,7 @@ myStartupHook = do
 -- Run xmonad with the settings you specify. No need to modify this.
 --
 main = do
-  xmobarProc <- spawnPipe "xmobar -x 0 /home/james/.xmonad/xmobar.hs"
+  xmobarProc <- spawnPipe ("xmobar -x 0 " ++ xmonadDir ++ "/xmobar.hs")
   xmonad $ docks $ def {
       -- simple stuff
         terminal           = "kitty",
