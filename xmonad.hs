@@ -56,14 +56,15 @@ alert message = dzenConfig centered message
           >=> addArgs ["-fg", "#ffd7af"]
           >=> addArgs ["-bg", "#262626"]
 
-data RofiMode = Drun | Run
+data RofiMode = Drun | Run | Emoji
 rofi :: RofiMode -> String
 rofi mode = "rofi" ++ combi ++ " -show " ++ _mode ++ " -show-icons"
   where
     (combi, _mode) =
       case mode of
-        Drun -> (" -combi-modi window,drun", "combi")
-        Run  -> ("", "run")
+        Drun  -> (" -combi-modi window,drun", "combi")
+        Run   -> ("", "run")
+        Emoji -> (" -modi emoji", "emoji")
 
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
@@ -86,7 +87,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     , ((modm3, xK_r     ), spawn $ rofi Run)
 
-    , ((modm3, xK_e     ), spawn "emote")
+    , ((modm3, xK_e     ), spawn $ rofi Emoji)
 
     -- close focused window
     , ((modm2, xK_c     ), kill)
@@ -156,7 +157,6 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((shiftMask .|. controlMask, xK_h), prevWS)
     , ((modm3, xK_t), namedScratchpadAction scratchpads "btop")
     , ((modm3, xK_p), namedScratchpadAction scratchpads "1password")
-    , ((modm3, xK_e), namedScratchpadAction scratchpads "emote")
     ]
     ++
 
