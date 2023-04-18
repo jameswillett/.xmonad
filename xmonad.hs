@@ -18,7 +18,6 @@ import XMonad.Layout.Named
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spacing
 import XMonad.Util.Cursor
-import XMonad.Util.Dzen
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
 import XMonad.Actions.CycleWS
@@ -45,15 +44,6 @@ scratchpads =
 -- "windows key" is usually mod4Mask.
 --
 myModMask       = mod1Mask .|. shiftMask
-
-alert :: String -> X ()
-alert message = dzenConfig centered message
-  where
-    windowW = (*20) $ length message
-    centered = center windowW 100 0
-      >=> font "-*-monospace-*-r-*-*-30-*-*-*-*-*-*-*"
-      >=> addArgs ["-fg", "#ffd7af"]
-      >=> addArgs ["-bg", "#262626"]
 
 data RofiMode = Drun | Run | Emoji
 rofi :: RofiMode -> String
@@ -160,7 +150,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     ++
 
     map (\(keyCode, flag) ->
-      ((0, keyCode), runProcessWithInput (xmonadDir ++ "/volume.sh") [flag] "" >>= alert)
+      ((0, keyCode), spawn (xmonadDir ++ "/volume.sh " ++ flag))
     ) [(0x1008FF13, "-u"), (0x1008FF11, "-d"), (0x1008FF12, "-m")]++
 
     --

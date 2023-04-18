@@ -10,12 +10,14 @@ do
     u)
       `pkill -f dzen`
       volupoutput=`amixer set Master on && amixer -q set Master 4%+`
-      echo "$volupoutput" | grep -i "front right: playback" | sed -r 's/.*\[(.*)\%\].+/expr \1 + $(( \1==100 ? 0 : 4 ))/' | sh | dbar -l 'volume ' -s x
+      p=`echo "$volupoutput" | grep -i "front right: playback" | sed -r 's/.*\[(.*)\%\].+/expr \1 + $(( \1==100 ? 0 : 4 ))/' | sh`
+      `dunstify -a volume -h int:value:$p --replace 42069 ""`
       ;;
     d)
       `pkill -f dzen`
       voldownoutput=`amixer set Master on && amixer -q set Master 4%-`
-      echo "$voldownoutput" | grep -i "front right: playback" | sed -r 's/.*\[(.*)\%\].+/expr \1 - $(( \1==0 ? 0 : 4 ))/' | sh | dbar -l 'volume ' -s x
+      p=`echo "$voldownoutput" | grep -i "front right: playback" | sed -r 's/.*\[(.*)\%\].+/expr \1 - $(( \1==0 ? 0 : 4 ))/' | sh`
+      `dunstify -a volume -h int:value:$p --replace 42069 ""`
       ;;
     m)
       `pkill -f dzen`
@@ -23,9 +25,9 @@ do
       onoroff=`echo "$muteoutput" | grep -i "front right: playback" | sed -r 's/.*\[(.*)\]/\1/'`
       if [[ $onoroff == "off" ]]
       then
-        echo "muted"
+        `dunstify -a volume "muted" --replace 42069`
       else
-        echo "$percent" | dbar -l 'volume ' -s x
+        `dunstify -a volume -h int:value:$percent --replace 42069 ""`
       fi
       ;;
     s)
