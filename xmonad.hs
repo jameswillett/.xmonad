@@ -7,9 +7,11 @@
 -- Normally, you'd only override those defaults you care about.
 --
 
-import XMonad
 import Data.Monoid
 import System.Exit
+
+import XMonad
+import XMonad.Actions.CycleWS
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.ManageDocks
@@ -17,18 +19,29 @@ import XMonad.Layout.Grid
 import XMonad.Layout.Named
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spacing
+import XMonad.ManageHook
+import XMonad.Prompt
+import XMonad.Prompt.ConfirmPrompt
 import XMonad.Util.Cursor
+import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
-import XMonad.Actions.CycleWS
-import XMonad.ManageHook
-import XMonad.Util.NamedScratchpad
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
 home = "/home/james"
 xmonadDir = home ++ "/.xmonad"
+
+exitPrompt :: XPConfig
+exitPrompt = def
+  { position          = CenteredAt 0.5 0.08
+  , bgColor           = "#cc241d"
+  , borderColor       = "#fb4934"
+  , height            = 100
+  , promptBorderWidth = 7
+  , historySize       = 0
+  }
 
 floatRectBig = customFloating $ W.RationalRect (2/6) (1/6) (2/6) (4/6)
 floatRectSmol = customFloating $ W.RationalRect (2/12) (1/12) (2/12) (3/12)
@@ -131,7 +144,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
 
     -- Quit xmonad
-    , ((modm2, xK_q     ), io exitSuccess)
+    , ((modm2, xK_q     ), confirmPrompt exitPrompt "exit" $ io exitSuccess)
 
     -- Restart xmonad
     , ((modm              , xK_q     ), spawn $ xmonadDir ++ "/recompile.sh")
