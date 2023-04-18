@@ -290,7 +290,7 @@ myStartupHook = do
   spawnOnce $ xmonadDir ++ "/setupMonitors.sh &"
   spawnOnce "nitrogen --restore &"
   spawnOnce $ "(picom --config " ++ xmonadDir ++ "/picom-xmonad.conf)&"
-  spawnOnce $ "(dunst -conf " ++ xmonadDir ++ "/dunstrc)&"
+  spawnOnce $ "(dunst -config " ++ xmonadDir ++ "/dunstrc) &"
 
 
 ------------------------------------------------------------------------
