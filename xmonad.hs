@@ -11,25 +11,24 @@ import Data.Monoid
 import System.Exit
 
 import XMonad
-import XMonad.Actions.CycleWS
-import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.EwmhDesktops
-import XMonad.Hooks.ManageDocks
-import XMonad.Layout.Grid
-import XMonad.Layout.Named
-import XMonad.Layout.NoBorders
-import XMonad.Layout.Spacing
-import XMonad.Layout.Spiral
-import XMonad.Layout.ThreeColumns
-import XMonad.ManageHook
-import XMonad.Prompt
-import XMonad.Prompt.ConfirmPrompt
-import XMonad.Util.Cursor
-import XMonad.Util.NamedScratchpad
-import XMonad.Util.Run
-import XMonad.Util.SpawnOnce
+import XMonad.Actions.CycleWS (nextWS, prevWS)
+import XMonad.Hooks.DynamicLog ( ppLayout, ppTitle, ppVisible, ppCurrent, ppOutput, dynamicLogWithPP, wrap)
+import XMonad.Hooks.EwmhDesktops (ewmh, ewmhFullscreen)
+import XMonad.Hooks.ManageDocks (avoidStruts, docks)
+import XMonad.Layout.Grid (Grid (GridRatio))
+import XMonad.Layout.Named (named)
+import XMonad.Layout.NoBorders (smartBorders, noBorders)
+import XMonad.Layout.Spacing (Border(Border), bottom, left, top, right, spacingRaw)
+import XMonad.Layout.Spiral (spiralWithDir, Direction(East), Rotation(CW))
+import XMonad.Layout.ThreeColumns (ThreeCol(ThreeColMid))
+import XMonad.Prompt (position, bgColor, borderColor, height, promptBorderWidth, historySize, XPPosition(Top))
+import XMonad.Prompt.ConfirmPrompt (confirmPrompt)
+import XMonad.StackSet (RationalRect(RationalRect), focusDown, focusUp, swapUp, swapDown, focusMaster, swapMaster, sink, greedyView, shift, view, shiftMaster)
+import XMonad.Util.Cursor (setDefaultCursor)
+import XMonad.Util.NamedScratchpad (customFloating, NamedScratchpad(NS), namedScratchpadAction, namedScratchpadManageHook)
+import XMonad.Util.Run (hPutStrLn, spawnPipe)
+import XMonad.Util.SpawnOnce (spawnOnce)
 
-import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
 home = "/home/james"
@@ -45,8 +44,8 @@ exitPrompt = confirmPrompt $ def
   , historySize       = 0
   }
 
-floatRectBig = customFloating $ W.RationalRect (2/6) (1/6) (2/6) (4/6)
-floatRectSmol = customFloating $ W.RationalRect (2/12) (1/12) (2/12) (3/12)
+floatRectBig = customFloating $ RationalRect (2/6) (1/6) (2/6) (4/6)
+floatRectSmol = customFloating $ RationalRect (2/12) (1/12) (2/12) (3/12)
 scratchpads =
   [ NS "btop"      "kitty --name btop btop" (resource=? "btop"     ) floatRectBig
   , NS "1password" "1password"              (resource=? "1password") floatRectBig
@@ -88,14 +87,14 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
     -- modm w, e, r switch screen focus
     -- modm 1..9 switch workplace focus
     , ((modm, xK_n      ), refresh) -- Resize viewed windows to the correct size
-    , ((modm, xK_Tab    ), windows W.focusDown) -- Move focus to the next window
-    , ((modm, xK_j      ), windows W.focusDown) -- Move focus to the next window
-    , ((modm, xK_k      ), windows W.focusUp  ) -- Move focus to the previous window
-    , ((modm, xK_m      ), windows W.focusMaster  ) -- Move focus to the master window
-    , ((modm, xK_Return ), windows W.swapMaster) -- Swap the focused window and the master window
+    , ((modm, xK_Tab    ), windows focusDown) -- Move focus to the next window
+    , ((modm, xK_j      ), windows focusDown) -- Move focus to the next window
+    , ((modm, xK_k      ), windows focusUp  ) -- Move focus to the previous window
+    , ((modm, xK_m      ), windows focusMaster  ) -- Move focus to the master window
+    , ((modm, xK_Return ), windows swapMaster) -- Swap the focused window and the master window
     , ((modm, xK_h      ), sendMessage Shrink) -- Shrink the master area
     , ((modm, xK_l      ), sendMessage Expand) -- Expand the master area
-    , ((modm, xK_t      ), withFocused $ windows . W.sink) -- Push window back into tiling
+    , ((modm, xK_t      ), withFocused $ windows . sink) -- Push window back into tiling
     , ((modm, xK_space  ), sendMessage NextLayout) -- Rotate through the available layout algorithms
     , ((modm, xK_comma  ), sendMessage (IncMasterN 1)) -- Increment the number of windows in the master area
     , ((modm, xK_period ), sendMessage (IncMasterN (-1))) -- Deincrement the number of windows in the master area
@@ -107,8 +106,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
     -- modm2 1..9  move to workplace
     , ((modm2, xK_Return), spawn $ XMonad.terminal conf) -- launch a terminal
     , ((modm2, xK_space ), setLayout $ XMonad.layoutHook conf) -- Reset the layouts on the current workspace to default
-    , ((modm2, xK_j     ), windows W.swapDown  ) -- Swap the focused window with the next window
-    , ((modm2, xK_k     ), windows W.swapUp    ) -- Swap the focused window with the previous window
+    , ((modm2, xK_j     ), windows swapDown  ) -- Swap the focused window with the next window
+    , ((modm2, xK_k     ), windows swapUp    ) -- Swap the focused window with the previous window
     , ((modm2, xK_q     ), exitPrompt "exit" $ io exitSuccess) -- Quit xmonad
     , ((modm2, xK_c     ), kill) -- close focused window
 
@@ -142,7 +141,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
     --
     [((m .|. modm, k), windows $ f i)
         | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
-        , (f, m) <- [(W.greedyView, 0), (W.shift, controlMask)]]
+        , (f, m) <- [(greedyView, 0), (shift, controlMask)]]
     ++
 
     --
@@ -151,17 +150,17 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
     --
     [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
         | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
-        , (f, m) <- [(W.view, 0), (W.shift, controlMask)]]
+        , (f, m) <- [(view, 0), (shift, controlMask)]]
 
 
 myMouseBindings (XConfig {XMonad.modMask = modm}) =
   M.fromList
     [ ((modm, button1),
-        \w -> focus w >> mouseMoveWindow w >> windows W.shiftMaster) -- mod-button1, Set the window to floating mode and move by dragging
+        \w -> focus w >> mouseMoveWindow w >> windows shiftMaster) -- mod-button1, Set the window to floating mode and move by dragging
     , ((modm, button2),
-        \w -> focus w >> windows W.shiftMaster) -- mod-button2, Raise the window to the top of the stack
+        \w -> focus w >> windows shiftMaster) -- mod-button2, Raise the window to the top of the stack
     , ((modm, button3),
-        \w -> focus w >> mouseResizeWindow w >> windows W.shiftMaster) -- mod-button3, Set the window to floating mode and resize by dragging
+        \w -> focus w >> mouseResizeWindow w >> windows shiftMaster) -- mod-button3, Set the window to floating mode and resize by dragging
 
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
