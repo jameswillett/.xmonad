@@ -13,9 +13,10 @@ Config { font = "JetBrainsMono Nerd Font Normal 12"
     , Run Com "hostname" [] "" 0
     , Run Com "/home/james/.xmonad/wifi.sh" [] "wifi" 10
     , Run Com "/home/james/.xmonad/volume.sh" ["-s"] "volume" 1
+    , Run Mpris2 "spotify" [] 1
     , Run StdinReader
     ]
 , sepChar = "%"
 , alignSep = "}{"
-, template = " %whoami%@%hostname% >>= %StdinReader%}{[vol: %volume%] | <fc=#49E20E>%date%</fc> "
+, template = " %whoami%@%hostname% >>= %StdinReader%}{%mpris2% [vol: %volume%] | <fc=#49E20E>%date%</fc> "
 }

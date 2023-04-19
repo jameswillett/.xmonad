@@ -10,6 +10,14 @@
 import Data.Monoid
 import System.Exit
 
+import Graphics.X11.ExtraTypes ( xF86XK_AudioLowerVolume
+                               , xF86XK_AudioRaiseVolume
+                               , xF86XK_AudioMute
+                               , xF86XK_AudioPlay
+                               , xF86XK_AudioNext
+                               , xF86XK_AudioPrev
+                               )
+
 import XMonad
 import XMonad.Actions.CycleWS (nextWS, prevWS)
 import XMonad.Hooks.DynamicLog ( ppLayout, ppTitle, ppVisible, ppCurrent, ppOutput, dynamicLogWithPP, wrap)
@@ -133,7 +141,12 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
     -- doesnt use mod keys
     map (\(keyCode, flag) ->
       ((0, keyCode), spawn (xmonadDir ++ "/volume.sh " ++ flag))
-    ) [(0x1008FF13, "-u"), (0x1008FF11, "-d"), (0x1008FF12, "-m")]++
+    ) [(xF86XK_AudioRaiseVolume, "-u"), (xF86XK_AudioLowerVolume, "-d"), (xF86XK_AudioMute, "-m")]++
+
+    -- play/pause/next/previous
+    map (\(keyCode, command) ->
+      ((0, keyCode), spawn ("playerctl " ++ command))
+    ) [(xF86XK_AudioPlay, "play-pause"), (xF86XK_AudioNext, "next"), (xF86XK_AudioPrev, "previous")] ++
 
     --
     -- modm-[1..9], Switch to workspace N
