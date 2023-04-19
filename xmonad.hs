@@ -103,8 +103,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm, xK_period), sendMessage (IncMasterN (-1))) -- Deincrement the number of windows in the master area
     , ((modm, xK_q     ), spawn $ xmonadDir ++ "/recompile.sh") -- Restart xmonad
 
-    -- mod2 w, e, r move to screen
-    -- mod2 1..9  move to workplace
+    -- modm2 w, e, r move to screen
+    -- modm2 1..9  move to workplace
     , ((modm2, xK_Return), spawn $ XMonad.terminal conf) -- launch a terminal
     , ((modm2, xK_space ), setLayout $ XMonad.layoutHook conf) -- Reset the layouts on the current workspace to default
     , ((modm2, xK_j     ), windows W.swapDown  ) -- Swap the focused window with the next window
@@ -120,20 +120,21 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm3, xK_t), namedScratchpadAction scratchpads "btop")
     , ((modm3, xK_p), namedScratchpadAction scratchpads "1password")
 
-    , ((modm4, xK_f), sendMessage $ JumpToLayout "full") -- jump to grid
+    , ((modm4, xK_f), sendMessage $ JumpToLayout "full") -- jump to full
     , ((modm4, xK_g), sendMessage $ JumpToLayout "grid") -- jump to grid
     , ((modm4, xK_s), spawn "systemctl suspend; betterlockscreen -l") -- lock and suspend
     ]
     ++
 
     -- volume/mute control
+    -- doesnt use mod keys
     map (\(keyCode, flag) ->
       ((0, keyCode), spawn (xmonadDir ++ "/volume.sh " ++ flag))
     ) [(0x1008FF13, "-u"), (0x1008FF11, "-d"), (0x1008FF12, "-m")]++
 
     --
-    -- mod-[1..9], Switch to workspace N
-    -- mod2-[1..9], Move client to workspace N
+    -- modm-[1..9], Switch to workspace N
+    -- modm2-[1..9], Move client to workspace N
     --
     [((m .|. modm, k), windows $ f i)
         | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
@@ -141,8 +142,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     ++
 
     --
-    -- mod-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
-    -- mod2-{w,e,r}, Move client to screen 1, 2, or 3
+    -- modm-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
+    -- modm2-{w,e,r}, Move client to screen 1, 2, or 3
     --
     [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
         | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
@@ -199,7 +200,7 @@ myLayout =
       grid      = GridRatio (7/4)
       tiled     = Tall 1 r (2/3)
       threeCol  = ThreeColMid 1 r (1/2)
-      spiral    = spiralWithDir East CW (4/3)
+      spiral    = spiralWithDir East CW (3/4)
 
       sb          px = Border { top = px, bottom = px, left = px, right = px }
       _spacingRaw px = spacingRaw False (sb px) True (sb px) True
