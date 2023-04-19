@@ -53,12 +53,7 @@ scratchpads =
   , NS "emote"     "emote"                  (resource=? "emote"    ) floatRectSmol
   ]
 
--- modMask lets you specify which modkey you want to use. The default
--- is mod1Mask ("left alt").  You may also consider using mod3Mask
--- ("right alt"), which does not conflict with emacs keybindings. The
--- "windows key" is usually mod4Mask.
---
-myModMask       = mod1Mask .|. shiftMask
+myModMask = mod1Mask .|. shiftMask -- shift + alt
 
 data RofiMode = Drun | Run | Emoji
 rofi :: RofiMode -> String
@@ -83,9 +78,12 @@ modm2 = myModMask .|. controlMask
 modm3 = myModMask .|. mod4Mask
 modm4 = modm3 .|. controlMask
 
-myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
+myKeys conf@(XConfig {XMonad.modMask = modm}) =
+  M.fromList $
     [ ((shiftMask .|. controlMask, xK_l), nextWS)
     , ((shiftMask .|. controlMask, xK_h), prevWS)
+
+    -- MOD1: shift + alt
 
     -- modm w, e, r switch screen focus
     -- modm 1..9 switch workplace focus
@@ -103,6 +101,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm, xK_period ), sendMessage (IncMasterN (-1))) -- Deincrement the number of windows in the master area
     , ((modm, xK_q      ), spawn $ xmonadDir ++ "/recompile.sh") -- Restart xmonad
 
+    -- MOD2: control + shift + alt
+
     -- modm2 w, e, r move to screen
     -- modm2 1..9  move to workplace
     , ((modm2, xK_Return), spawn $ XMonad.terminal conf) -- launch a terminal
@@ -110,8 +110,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm2, xK_j     ), windows W.swapDown  ) -- Swap the focused window with the next window
     , ((modm2, xK_k     ), windows W.swapUp    ) -- Swap the focused window with the previous window
     , ((modm2, xK_q     ), exitPrompt "exit" $ io exitSuccess) -- Quit xmonad
-    , ((modm2, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -")) -- Run xmessage with a summary of the default keybindings (useful for beginners)
     , ((modm2, xK_c     ), kill) -- close focused window
+
+    -- MOD3: meta + shift + alt
 
     , ((modm3, xK_l     ), spawn $ rofi Drun) -- select desktop app
     , ((modm3, xK_r     ), spawn $ rofi Run) -- run command
@@ -120,10 +121,13 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm3, xK_t     ), namedScratchpadAction scratchpads "btop")
     , ((modm3, xK_p     ), namedScratchpadAction scratchpads "1password")
 
+    -- MOD4: meta + control + shift + alt
+
     , ((modm4, xK_f     ), sendMessage $ JumpToLayout "full") -- jump to full
     , ((modm4, xK_g     ), sendMessage $ JumpToLayout "grid") -- jump to grid
     , ((modm4, xK_s     ), spawn "systemctl suspend; betterlockscreen -l") -- lock and suspend
     ]
+
     ++
 
     -- volume/mute control
@@ -150,36 +154,18 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , (f, m) <- [(W.view, 0), (W.shift, controlMask)]]
 
 
-------------------------------------------------------------------------
--- Mouse bindings: default actions bound to mouse events
---
-myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList
-
-    -- mod-button1, Set the window to floating mode and move by dragging
-    [ ((modm, button1), \w -> focus w >> mouseMoveWindow w
-                                       >> windows W.shiftMaster)
-
-    -- mod-button2, Raise the window to the top of the stack
-    , ((modm, button2), \w -> focus w >> windows W.shiftMaster)
-
-    -- mod-button3, Set the window to floating mode and resize by dragging
-    , ((modm, button3), \w -> focus w >> mouseResizeWindow w
-                                       >> windows W.shiftMaster)
+myMouseBindings (XConfig {XMonad.modMask = modm}) =
+  M.fromList
+    [ ((modm, button1),
+        \w -> focus w >> mouseMoveWindow w >> windows W.shiftMaster) -- mod-button1, Set the window to floating mode and move by dragging
+    , ((modm, button2),
+        \w -> focus w >> windows W.shiftMaster) -- mod-button2, Raise the window to the top of the stack
+    , ((modm, button3),
+        \w -> focus w >> mouseResizeWindow w >> windows W.shiftMaster) -- mod-button3, Set the window to floating mode and resize by dragging
 
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
 
-------------------------------------------------------------------------
--- Layouts:
-
--- You can specify and transform your layouts by modifying these values.
--- If you change layout bindings be sure to use 'mod-shift-space' after
--- restarting (with 'mod-q') to reset your layout state to the new
--- defaults, as xmonad preserves your old layout settings by default.
---
--- The available layouts.  Note that each layout is separated by |||,
--- which denotes layout choice.
---
 myLayout =
   smartBorders
   (   named "grid"   (withGap grid)
@@ -240,12 +226,6 @@ myManageHook = composeAll
 --
 myEventHook = mempty
 
-------------------------------------------------------------------------
--- Status bars and logging
-
--- Perform an arbitrary action on each internal state change or X event.
--- See the 'XMonad.Hooks.DynamicLog' extension for examples.
---
 clampLength :: Int -> String -> String
 clampLength n string = clamped ++ (if string /= clamped then ellipses else "")
   where
@@ -262,14 +242,6 @@ myLogHook handle = dynamicLogWithPP $ def
   , ppOutput  = hPutStrLn handle
   }
 
-------------------------------------------------------------------------
--- Startup hook
-
--- Perform an arbitrary action each time xmonad starts or is restarted
--- with mod-q.  Used by, e.g., XMonad.Layout.PerWorkspace to initialize
--- per-workspace layout choices.
---
--- By default, do nothing.
 myStartupHook = do
   setDefaultCursor xC_left_ptr
   spawnOnce $ xmonadDir ++ "/initxmonad.sh &"
@@ -279,11 +251,6 @@ myStartupHook = do
   spawnOnce $ "(dunst -config " ++ xmonadDir ++ "/dunstrc) &"
 
 
-------------------------------------------------------------------------
--- Now run xmonad with all the defaults we set up.
-
--- Run xmonad with the settings you specify. No need to modify this.
---
 main = do
   xmobarProc <- spawnPipe ("xmobar -x 0 " ++ xmonadDir ++ "/xmobar.hs")
   xmonad $ docks $ ewmhFullscreen . ewmh $ def {
@@ -308,54 +275,3 @@ main = do
         logHook            = myLogHook xmobarProc,
         startupHook        = myStartupHook
     }
-
--- | Finally, a copy of the default bindings in simple textual tabular format.
-help :: String
-help = unlines ["The default modifier key is 'alt'. Default keybindings:",
-    "",
-    "-- launching and killing programs",
-    "mod-Shift-Enter  Launch xterminal",
-    "mod-p            Launch dmenu",
-    "mod-Shift-p      Launch gmrun",
-    "mod-Shift-c      Close/kill the focused window",
-    "mod-Space        Rotate through the available layout algorithms",
-    "mod-Shift-Space  Reset the layouts on the current workSpace to default",
-    "mod-n            Resize/refresh viewed windows to the correct size",
-    "",
-    "-- move focus up or down the window stack",
-    "mod-Tab        Move focus to the next window",
-    "mod-Shift-Tab  Move focus to the previous window",
-    "mod-j          Move focus to the next window",
-    "mod-k          Move focus to the previous window",
-    "mod-m          Move focus to the master window",
-    "",
-    "-- modifying the window order",
-    "mod-Return   Swap the focused window and the master window",
-    "mod-Shift-j  Swap the focused window with the next window",
-    "mod-Shift-k  Swap the focused window with the previous window",
-    "",
-    "-- resizing the master/slave ratio",
-    "mod-h  Shrink the master area",
-    "mod-l  Expand the master area",
-    "",
-    "-- floating layer support",
-    "mod-t  Push window back into tiling; unfloat and re-tile it",
-    "",
-    "-- increase or decrease number of windows in the master area",
-    "mod-comma  (mod-,)   Increment the number of windows in the master area",
-    "mod-period (mod-.)   Deincrement the number of windows in the master area",
-    "",
-    "-- quit, or restart",
-    "mod-Shift-q  Quit xmonad",
-    "mod-q        Restart xmonad",
-    "mod-[1..9]   Switch to workSpace N",
-    "",
-    "-- Workspaces & screens",
-    "mod-Shift-[1..9]   Move client to workspace N",
-    "mod-{w,e,r}        Switch to physical/Xinerama screens 1, 2, or 3",
-    "mod-Shift-{w,e,r}  Move client to screen 1, 2, or 3",
-    "",
-    "-- Mouse bindings: default actions bound to mouse events",
-    "mod-button1  Set the window to floating mode and move by dragging",
-    "mod-button2  Raise the window to the top of the stack",
-    "mod-button3  Set the window to floating mode and resize by dragging"]
