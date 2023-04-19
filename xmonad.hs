@@ -84,87 +84,45 @@ modm3 = myModMask .|. mod4Mask
 modm4 = modm3 .|. controlMask
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
-    -- launch a terminal
-    [ ((modm2, xK_Return), spawn $ XMonad.terminal conf)
-
-    , ((modm3, xK_l     ), spawn $ rofi Drun)
-
-    , ((modm3, xK_r     ), spawn $ rofi Run)
-
-    , ((modm3, xK_e     ), spawn $ rofi Emoji)
-
-    -- close focused window
-    , ((modm2, xK_c     ), kill)
-
-    -- Rotate through the available layout algorithms
-    , ((modm,               xK_space ), sendMessage NextLayout)
-
-    -- jump to full/grid
-    , ((modm4, xK_f), sendMessage $ JumpToLayout "full")
-    , ((modm4, xK_g), sendMessage $ JumpToLayout "grid")
-
-    --  Reset the layouts on the current workspace to default
-    , ((modm2, xK_space ), setLayout $ XMonad.layoutHook conf)
-
-    -- Resize viewed windows to the correct size
-    , ((modm,               xK_n     ), refresh)
-
-    -- Move focus to the next window
-    , ((modm,               xK_Tab   ), windows W.focusDown)
-
-    -- Move focus to the next window
-    , ((modm,               xK_j     ), windows W.focusDown)
-
-    -- Move focus to the previous window
-    , ((modm,               xK_k     ), windows W.focusUp  )
-
-    -- Move focus to the master window
-    , ((modm,               xK_m     ), windows W.focusMaster  )
-
-    -- Swap the focused window and the master window
-    , ((modm,               xK_Return), windows W.swapMaster)
-
-    -- Swap the focused window with the next window
-    , ((modm2, xK_j     ), windows W.swapDown  )
-
-    -- Swap the focused window with the previous window
-    , ((modm2, xK_k     ), windows W.swapUp    )
-
-    -- Shrink the master area
-    , ((modm,               xK_h     ), sendMessage Shrink)
-
-    -- Expand the master area
-    , ((modm,               xK_l     ), sendMessage Expand)
-
-    -- Push window back into tiling
-    , ((modm,               xK_t     ), withFocused $ windows . W.sink)
-
-    -- Increment the number of windows in the master area
-    , ((modm              , xK_comma ), sendMessage (IncMasterN 1))
-
-    -- Deincrement the number of windows in the master area
-    , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
-
-    -- Quit xmonad
-    , ((modm2, xK_q     ), confirmPrompt exitPrompt "exit" $ io exitSuccess)
-
-    -- Restart xmonad
-    , ((modm              , xK_q     ), spawn $ xmonadDir ++ "/recompile.sh")
-
-    -- Run xmessage with a summary of the default keybindings (useful for beginners)
-    , ((modm2, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
-
-    , ((modm3, xK_3 ), spawn ("import " ++ home ++ "/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png"))
-    , ((modm4, xK_s ), spawn "systemctl suspend; betterlockscreen -l")
-
-    , ((shiftMask .|. controlMask, xK_l), nextWS)
+    [ ((shiftMask .|. controlMask, xK_l), nextWS)
     , ((shiftMask .|. controlMask, xK_h), prevWS)
+
+    , ((modm, xK_n     ), refresh) -- Resize viewed windows to the correct size
+    , ((modm, xK_Tab   ), windows W.focusDown) -- Move focus to the next window
+    , ((modm, xK_j     ), windows W.focusDown) -- Move focus to the next window
+    , ((modm, xK_k     ), windows W.focusUp  ) -- Move focus to the previous window
+    , ((modm, xK_m     ), windows W.focusMaster  ) -- Move focus to the master window
+    , ((modm, xK_Return), windows W.swapMaster) -- Swap the focused window and the master window
+    , ((modm, xK_h     ), sendMessage Shrink) -- Shrink the master area
+    , ((modm, xK_l     ), sendMessage Expand) -- Expand the master area
+    , ((modm, xK_t     ), withFocused $ windows . W.sink) -- Push window back into tiling
+    , ((modm, xK_space ), sendMessage NextLayout) -- Rotate through the available layout algorithms
+    , ((modm, xK_comma ), sendMessage (IncMasterN 1)) -- Increment the number of windows in the master area
+    , ((modm, xK_period), sendMessage (IncMasterN (-1))) -- Deincrement the number of windows in the master area
+    , ((modm, xK_q     ), spawn $ xmonadDir ++ "/recompile.sh") -- Restart xmonad
+
+    , ((modm2, xK_Return), spawn $ XMonad.terminal conf) -- launch a terminal
+    , ((modm2, xK_space ), setLayout $ XMonad.layoutHook conf) -- Reset the layouts on the current workspace to default
+    , ((modm2, xK_j     ), windows W.swapDown  ) -- Swap the focused window with the next window
+    , ((modm2, xK_k     ), windows W.swapUp    ) -- Swap the focused window with the previous window
+    , ((modm2, xK_q     ), confirmPrompt exitPrompt "exit" $ io exitSuccess) -- Quit xmonad
+    , ((modm2, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -")) -- Run xmessage with a summary of the default keybindings (useful for beginners)
+    , ((modm2, xK_c     ), kill) -- close focused window
+
+    , ((modm3, xK_l), spawn $ rofi Drun) -- select desktop app
+    , ((modm3, xK_r), spawn $ rofi Run) -- run command
+    , ((modm3, xK_e), spawn $ rofi Emoji) -- emoji picker
+    , ((modm3, xK_3), spawn ("import " ++ home ++ "/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png")) -- screenshot
     , ((modm3, xK_t), namedScratchpadAction scratchpads "btop")
     , ((modm3, xK_p), namedScratchpadAction scratchpads "1password")
+
+    , ((modm4, xK_f), sendMessage $ JumpToLayout "full") -- jump to grid
+    , ((modm4, xK_g), sendMessage $ JumpToLayout "grid") -- jump to grid
+    , ((modm4, xK_s), spawn "systemctl suspend; betterlockscreen -l") -- lock and suspend
     ]
     ++
 
-    map (\(keyCode, flag) ->
+    map (\(keyCode, flag) -> -- volume/mute control
       ((0, keyCode), spawn (xmonadDir ++ "/volume.sh " ++ flag))
     ) [(0x1008FF13, "-u"), (0x1008FF11, "-d"), (0x1008FF12, "-m")]++
 
