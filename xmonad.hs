@@ -35,8 +35,8 @@ import qualified Data.Map        as M
 home = "/home/james"
 xmonadDir = home ++ "/.xmonad"
 
-exitPrompt :: XPConfig
-exitPrompt = def
+exitPrompt :: String -> X () -> X ()
+exitPrompt = confirmPrompt $ def
   { position          = Top
   , bgColor           = "#cc241d"
   , borderColor       = "#fb4934"
@@ -89,19 +89,19 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- modm w, e, r switch screen focus
     -- modm 1..9 switch workplace focus
-    , ((modm, xK_n     ), refresh) -- Resize viewed windows to the correct size
-    , ((modm, xK_Tab   ), windows W.focusDown) -- Move focus to the next window
-    , ((modm, xK_j     ), windows W.focusDown) -- Move focus to the next window
-    , ((modm, xK_k     ), windows W.focusUp  ) -- Move focus to the previous window
-    , ((modm, xK_m     ), windows W.focusMaster  ) -- Move focus to the master window
-    , ((modm, xK_Return), windows W.swapMaster) -- Swap the focused window and the master window
-    , ((modm, xK_h     ), sendMessage Shrink) -- Shrink the master area
-    , ((modm, xK_l     ), sendMessage Expand) -- Expand the master area
-    , ((modm, xK_t     ), withFocused $ windows . W.sink) -- Push window back into tiling
-    , ((modm, xK_space ), sendMessage NextLayout) -- Rotate through the available layout algorithms
-    , ((modm, xK_comma ), sendMessage (IncMasterN 1)) -- Increment the number of windows in the master area
-    , ((modm, xK_period), sendMessage (IncMasterN (-1))) -- Deincrement the number of windows in the master area
-    , ((modm, xK_q     ), spawn $ xmonadDir ++ "/recompile.sh") -- Restart xmonad
+    , ((modm, xK_n      ), refresh) -- Resize viewed windows to the correct size
+    , ((modm, xK_Tab    ), windows W.focusDown) -- Move focus to the next window
+    , ((modm, xK_j      ), windows W.focusDown) -- Move focus to the next window
+    , ((modm, xK_k      ), windows W.focusUp  ) -- Move focus to the previous window
+    , ((modm, xK_m      ), windows W.focusMaster  ) -- Move focus to the master window
+    , ((modm, xK_Return ), windows W.swapMaster) -- Swap the focused window and the master window
+    , ((modm, xK_h      ), sendMessage Shrink) -- Shrink the master area
+    , ((modm, xK_l      ), sendMessage Expand) -- Expand the master area
+    , ((modm, xK_t      ), withFocused $ windows . W.sink) -- Push window back into tiling
+    , ((modm, xK_space  ), sendMessage NextLayout) -- Rotate through the available layout algorithms
+    , ((modm, xK_comma  ), sendMessage (IncMasterN 1)) -- Increment the number of windows in the master area
+    , ((modm, xK_period ), sendMessage (IncMasterN (-1))) -- Deincrement the number of windows in the master area
+    , ((modm, xK_q      ), spawn $ xmonadDir ++ "/recompile.sh") -- Restart xmonad
 
     -- modm2 w, e, r move to screen
     -- modm2 1..9  move to workplace
@@ -109,20 +109,20 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm2, xK_space ), setLayout $ XMonad.layoutHook conf) -- Reset the layouts on the current workspace to default
     , ((modm2, xK_j     ), windows W.swapDown  ) -- Swap the focused window with the next window
     , ((modm2, xK_k     ), windows W.swapUp    ) -- Swap the focused window with the previous window
-    , ((modm2, xK_q     ), confirmPrompt exitPrompt "exit" $ io exitSuccess) -- Quit xmonad
+    , ((modm2, xK_q     ), exitPrompt "exit" $ io exitSuccess) -- Quit xmonad
     , ((modm2, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -")) -- Run xmessage with a summary of the default keybindings (useful for beginners)
     , ((modm2, xK_c     ), kill) -- close focused window
 
-    , ((modm3, xK_l), spawn $ rofi Drun) -- select desktop app
-    , ((modm3, xK_r), spawn $ rofi Run) -- run command
-    , ((modm3, xK_e), spawn $ rofi Emoji) -- emoji picker
-    , ((modm3, xK_3), spawn ("import " ++ home ++ "/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png")) -- screenshot
-    , ((modm3, xK_t), namedScratchpadAction scratchpads "btop")
-    , ((modm3, xK_p), namedScratchpadAction scratchpads "1password")
+    , ((modm3, xK_l     ), spawn $ rofi Drun) -- select desktop app
+    , ((modm3, xK_r     ), spawn $ rofi Run) -- run command
+    , ((modm3, xK_e     ), spawn $ rofi Emoji) -- emoji picker
+    , ((modm3, xK_3     ), spawn ("import " ++ home ++ "/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png")) -- screenshot
+    , ((modm3, xK_t     ), namedScratchpadAction scratchpads "btop")
+    , ((modm3, xK_p     ), namedScratchpadAction scratchpads "1password")
 
-    , ((modm4, xK_f), sendMessage $ JumpToLayout "full") -- jump to full
-    , ((modm4, xK_g), sendMessage $ JumpToLayout "grid") -- jump to grid
-    , ((modm4, xK_s), spawn "systemctl suspend; betterlockscreen -l") -- lock and suspend
+    , ((modm4, xK_f     ), sendMessage $ JumpToLayout "full") -- jump to full
+    , ((modm4, xK_g     ), sendMessage $ JumpToLayout "grid") -- jump to grid
+    , ((modm4, xK_s     ), spawn "systemctl suspend; betterlockscreen -l") -- lock and suspend
     ]
     ++
 
