@@ -19,6 +19,8 @@ import XMonad.Layout.Grid
 import XMonad.Layout.Named
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spacing
+import XMonad.Layout.Spiral
+import XMonad.Layout.ThreeColumns
 import XMonad.ManageHook
 import XMonad.Prompt
 import XMonad.Prompt.ConfirmPrompt
@@ -35,10 +37,10 @@ xmonadDir = home ++ "/.xmonad"
 
 exitPrompt :: XPConfig
 exitPrompt = def
-  { position          = CenteredAt 0.5 0.08
+  { position          = Top
   , bgColor           = "#cc241d"
   , borderColor       = "#fb4934"
-  , height            = 100
+  , height            = 200
   , promptBorderWidth = 7
   , historySize       = 0
   }
@@ -218,16 +220,23 @@ myLayout =
   smartBorders
   (   named "grid"   (withGap grid)
   ||| named "tall"   (withGap tiled)
+  ||| named "3col"   (withGap threeCol)
+  ||| named "spiral" (withGap spiral)
   ||| named "fullg"  (withGap $ noBorders Full)
   ||| named "full"   (noBorders Full)
   )
     where
       withGap l = avoidStruts $ _spacingRaw 10 l
 
+      -- percentage per resize message
+      r         = 3 / 100
+
       -- (7/4) resolves to a 2x2 grid on ultrawide monitors.
       -- might need to change to (3/2) for normaler aspect ratios
       grid      = GridRatio (7/4)
-      tiled     = Tall 1 (3 / 100) (2/3)
+      tiled     = Tall 1 r (2/3)
+      threeCol  = ThreeColMid 1 r (1/2)
+      spiral    = spiralWithDir East CW (4/3)
 
       sb          px = Border { top = px, bottom = px, left = px, right = px }
       _spacingRaw px = spacingRaw False (sb px) True (sb px) True
@@ -313,7 +322,7 @@ myStartupHook = do
 --
 main = do
   xmobarProc <- spawnPipe ("xmobar -x 0 " ++ xmonadDir ++ "/xmobar.hs")
-  xmonad $ docks $ ewmh def {
+  xmonad $ docks $ ewmhFullscreen . ewmh $ def {
       -- simple stuff
         terminal           = "kitty",
         focusFollowsMouse  = True,
