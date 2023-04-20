@@ -263,7 +263,7 @@ myStartupHook = do
   spawnOnce "nitrogen --restore &"
   spawnOnce $ "(picom --config " ++ xmonadDir ++ "/picom-xmonad.conf)&"
   spawnOnce $ "(dunst -config " ++ xmonadDir ++ "/dunstrc) &"
-  spawnOnce "redshift &"
+  spawnOnce "redshift -P &"
   spawnOnce "nm-applet &"
 
 main = do
