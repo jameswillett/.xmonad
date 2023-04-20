@@ -23,6 +23,7 @@ import XMonad.Actions.CycleWS (nextWS, prevWS)
 import XMonad.Hooks.DynamicLog ( ppLayout, ppTitle, ppVisible, ppCurrent, ppOutput, dynamicLogWithPP, wrap)
 import XMonad.Hooks.EwmhDesktops (ewmh, ewmhFullscreen)
 import XMonad.Hooks.ManageDocks (avoidStruts, docks)
+import XMonad.Hooks.ManageHelpers (doFloatAt)
 import XMonad.Layout.Grid (Grid (GridRatio))
 import XMonad.Layout.Named (named)
 import XMonad.Layout.NoBorders (smartBorders, noBorders)
@@ -221,6 +222,7 @@ myLayout =
 myManageHook = composeAll
     [ className =? "MPlayer"        --> doFloat
     , className =? "Gimp"           --> doFloat
+    , resource  =? "protonvpn"      --> doFloatAt 0 0
     , resource  =? "btop"           --> doFloat
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "kdesktop"       --> doIgnore
@@ -262,7 +264,7 @@ myStartupHook = do
   spawnOnce $ "(picom --config " ++ xmonadDir ++ "/picom-xmonad.conf)&"
   spawnOnce $ "(dunst -config " ++ xmonadDir ++ "/dunstrc) &"
   spawnOnce "redshift &"
-
+  spawnOnce "nm-applet &"
 
 main = do
   xmobarProc <- spawnPipe ("xmobar -x 0 " ++ xmonadDir ++ "/xmobar.hs")
