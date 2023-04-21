@@ -42,6 +42,7 @@ import qualified Data.Map        as M
 
 home = "/home/james"
 xmonadDir = home ++ "/.xmonad"
+lockCmd = "systemctl suspend; betterlockscreen -l"
 
 exitPrompt :: String -> X () -> X ()
 exitPrompt = confirmPrompt $ def
@@ -133,7 +134,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
 
     , ((modm4, xK_f     ), sendMessage $ JumpToLayout "full") -- jump to full
     , ((modm4, xK_g     ), sendMessage $ JumpToLayout "grid") -- jump to grid
-    , ((modm4, xK_s     ), spawn "systemctl suspend; betterlockscreen -l") -- lock and suspend
+    , ((modm4, xK_s     ), spawn lockCmd) -- lock and suspend
     ]
 
     ++
@@ -264,6 +265,7 @@ myStartupHook = do
   spawnOnce $ "(picom --config " ++ xmonadDir ++ "/picom-xmonad.conf)&"
   spawnOnce $ "(dunst -config " ++ xmonadDir ++ "/dunstrc) &"
   spawnOnce "redshift -P &"
+  spawnOnce $ "xidlehook --timer 600 '" ++ lockCmd ++ "' ''" ++ "&"
   spawnOnce "nm-applet &"
 
 main = do
