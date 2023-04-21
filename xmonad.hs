@@ -266,7 +266,7 @@ myStartupHook = do
   spawnOnce $ "(dunst -config " ++ xmonadDir ++ "/dunstrc) &"
   spawnOnce "redshift -P &"
   spawnOnce $ "xidlehook --timer 300 '" ++ lockCmd ++ "' '' --not-when-audio --not-when-fullscreen --detect-sleep &"
-  spawnOnce "nm-applet &"
+  spawnOnce "nm-applet &" -- required to be running to connect to the protonvpn 🫥
 
 main = do
   xmobarProc <- spawnPipe ("xmobar -x 0 " ++ xmonadDir ++ "/xmobar.hs")
