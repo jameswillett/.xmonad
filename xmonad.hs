@@ -118,7 +118,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
     , ((modm2, xK_space ), setLayout $ XMonad.layoutHook conf) -- Reset the layouts on the current workspace to default
     , ((modm2, xK_j     ), windows swapDown  ) -- Swap the focused window with the next window
     , ((modm2, xK_k     ), windows swapUp    ) -- Swap the focused window with the previous window
-    , ((modm2, xK_q     ), exitPrompt "exit" $ io exitSuccess) -- Quit xmonad
+    , ((modm2, xK_q     ), exitPrompt "exit" $ spawn "killall picom xidlehook redshift nitrogen" >> io exitSuccess) -- Quit xmonad
     , ((modm2, xK_c     ), kill) -- close focused window
 
     -- MOD3: meta + shift + alt
