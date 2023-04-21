@@ -13,6 +13,7 @@ getPlayerIcon player =
     -- Gets unicode char for nerd font
     "'chromium'" -> "\62056 "
     "'spotify'"  -> "\61884 "
+    "'vlc'"      -> "\984444 "
     _            -> ""
 
 getStatusIcon status =
@@ -20,6 +21,9 @@ getStatusIcon status =
     "Playing" -> "▶️ "
     "Paused"  -> "⏸️ "
     _         -> ""
+
+stripLeadingDash (' ':'-':' ':xs) = xs
+stripLeadingDash x            = x
 
 isError :: ExitCode -> Bool
 isError ExitSuccess = False
@@ -33,4 +37,4 @@ main = do
       [ "metadata", "-f"
       , "'{{artist}} - <fc=#ccc>{{title}}</fc> {{duration(position)}} ({{duration(mpris:length)}})'"
       ] ""
-    putStrLn $ getPlayerIcon player ++ getStatusIcon status ++ (strip . trim) playString
+    putStrLn $ getPlayerIcon player ++ getStatusIcon status ++ stripLeadingDash ((strip . trim) playString)

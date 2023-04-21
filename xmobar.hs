@@ -8,12 +8,12 @@ Config { font = "JetBrainsMono Nerd Font Normal 12"
 , position = Static { xpos = 1100 , ypos = 20 , width = 3400 , height = 30 }
 , lowerOnStart = True
 , commands =
-    [ Run Date "%a %b %d %H:%M:%S" "date" 10
+    [ Run Date "%a %b %d %H:%M:%S" "date" 1
     , Run Com "whoami" [] "" 0
     , Run Com "hostname" [] "" 0
-    , Run Com "/home/james/.xmonad/wifi.sh" [] "wifi" 10
-    , Run Com "/home/james/.xmonad/volume.sh" ["-s"] "volume" 1
-    , Run Com "/home/james/.xmonad/music" [] "music" 1
+    , Run Com "/home/james/.xmonad/wifi.sh" [] "wifi" 5
+    , Run Com "/home/james/.xmonad/volume.sh" ["-s"] "volume" 5
+    , Run Com "/home/james/.xmonad/music" [] "music" 5
     , Run StdinReader
     ]
 , sepChar = "%"
