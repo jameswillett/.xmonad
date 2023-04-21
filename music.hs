@@ -1,8 +1,9 @@
-#!/usr/bin/env runhaskell
-import System.Process (readProcess, readProcessWithExitCode)
+import System.Process (readProcess, readCreateProcess, readProcessWithExitCode)
 import System.Exit (ExitCode, ExitCode(ExitSuccess))
 import Data.Char (isSpace)
 import Data.List (dropWhile, dropWhileEnd)
+
+p = readCreateProcess
 
 trim = dropWhileEnd isSpace . dropWhile isSpace
 strip = tail . init
@@ -15,7 +16,7 @@ getPlayerIcon player =
     _            -> ""
 
 getStatusIcon status =
-  case status of
+  case trim status of
     "Playing" -> "▶️ "
     "Paused"  -> "⏸️ "
     _         -> ""
@@ -30,6 +31,6 @@ main = do
     player <- readProcess "playerctl" ["metadata" , "-f",  "'{{playerName}}'"] ""
     playString <- readProcess "playerctl"
       [ "metadata", "-f"
-      , "'{{artist}} - {{title}} {{duration(position)}} ({{duration(mpris:length)}})'"
+      , "'{{artist}} - <fc=#ccc>{{title}}</fc> {{duration(position)}} ({{duration(mpris:length)}})'"
       ] ""
-    putStrLn $ getPlayerIcon player ++ (strip . trim) playString
+    putStrLn $ getPlayerIcon player ++ getStatusIcon status ++ (strip . trim) playString
