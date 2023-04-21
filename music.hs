@@ -3,8 +3,6 @@ import System.Exit (ExitCode, ExitCode(ExitSuccess))
 import Data.Char (isSpace)
 import Data.List (dropWhile, dropWhileEnd)
 
-p = readCreateProcess
-
 trim = dropWhileEnd isSpace . dropWhile isSpace
 strip = tail . init
 
@@ -23,7 +21,7 @@ getStatusIcon status =
     _         -> ""
 
 stripLeadingDash (' ':'-':' ':xs) = xs
-stripLeadingDash x            = x
+stripLeadingDash x                = x
 
 isError :: ExitCode -> Bool
 isError ExitSuccess = False
