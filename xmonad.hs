@@ -265,7 +265,7 @@ myStartupHook = do
   spawnOnce $ "(picom --config " ++ xmonadDir ++ "/picom-xmonad.conf)&"
   spawnOnce $ "(dunst -config " ++ xmonadDir ++ "/dunstrc) &"
   spawnOnce "redshift -P &"
-  spawnOnce $ "xidlehook --timer 600 '" ++ lockCmd ++ "' ''" ++ "&"
+  spawnOnce $ "xidlehook --timer 600 '" ++ lockCmd ++ "' ''" ++ " --not-when-audio --not-when-fullscreen --detect-sleep &"
   spawnOnce "nm-applet &"
 
 main = do
