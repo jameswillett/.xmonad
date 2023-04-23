@@ -41,6 +41,7 @@ import XMonad.Util.SpawnOnce (spawnOnce)
 
 import qualified Data.Map        as M
 import XMonad.Actions.UpdatePointer (updatePointer)
+import Control.Monad (mapM_)
 
 home = "/home/james"
 xmonadDir = home ++ "/.xmonad"
@@ -264,16 +265,20 @@ myLogHook handle = dynamicLogWithPP $ def
   , ppOutput  = hPutStrLn handle
   }
 
+startupCmds =
+  [ xmonadDir ++ "/initxmonad.sh &"
+  , xmonadDir ++ "/setupMonitors.sh &"
+  , "nitrogen --restore &"
+  , "(picom --config " ++ xmonadDir ++ "/picom-xmonad.conf)&"
+  , "(dunst -config " ++ xmonadDir ++ "/dunstrc) &"
+  , "redshift -P &"
+  , "xidlehook --timer 600 '" ++ lockCmd ++ "' '' --not-when-audio --not-when-fullscreen --detect-sleep &"
+  , "nm-applet &"
+  ]
+
 myStartupHook = do
   setDefaultCursor xC_left_ptr
-  spawnOnce $ xmonadDir ++ "/initxmonad.sh &"
-  spawnOnce $ xmonadDir ++ "/setupMonitors.sh &"
-  spawnOnce "nitrogen --restore &"
-  spawnOnce $ "(picom --config " ++ xmonadDir ++ "/picom-xmonad.conf)&"
-  spawnOnce $ "(dunst -config " ++ xmonadDir ++ "/dunstrc) &"
-  spawnOnce "redshift -P &"
-  spawnOnce $ "xidlehook --timer 600 '" ++ lockCmd ++ "' '' --not-when-audio --not-when-fullscreen --detect-sleep &"
-  spawnOnce "nm-applet &" -- required to be running to connect to the protonvpn 🫥
+  mapM_ spawnOnce startupCmds
 
 main = do
   xmobarProc <- spawnPipe ("xmobar -x 0 " ++ xmonadDir ++ "/xmobar.hs")
