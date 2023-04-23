@@ -186,10 +186,11 @@ myLayout =
   ||| named "tall"   (withGap tiled)
   ||| named "3col"   (withGap threeCol)
   ||| named "spiral" (withGap spiral)
-  ||| named "fullg"  (withGap $ noBorders Full)
-  ||| named "full"   (noBorders Full)
+  ||| named "fullg"  (avoidStruts full)
+  ||| named "full"   full
   )
     where
+      full = noBorders Full
       withGap l = avoidStruts $ _spacingRaw 10 l
 
       -- percentage per resize message
