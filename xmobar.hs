@@ -1,11 +1,11 @@
-Config { font = "JetBrainsMono Nerd Font Normal 12"
+Config { font = "JetBrainsMono Nerd Font Normal 10"
 , bgColor = "#282828"
 , alpha = 255
 , fgColor = "#7CAC7A"
 -- will probably need to change this in a branch for each computer
 -- or figure out a more dynamic solution
 -- currently very specific to my desktop
-, position = Static { xpos = 1100 , ypos = 20 , width = 3400 , height = 30 }
+, position = Top
 , lowerOnStart = True
 , commands =
     [ Run Date "%a %b %d %H:%M:%S" "date" 1
