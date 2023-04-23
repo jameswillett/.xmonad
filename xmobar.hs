@@ -1,10 +1,7 @@
-Config { font = "JetBrainsMono Nerd Font Normal 10"
+Config { font = "JetBrainsMono Nerd Font Normal 11"
 , bgColor = "#282828"
 , alpha = 255
 , fgColor = "#7CAC7A"
--- will probably need to change this in a branch for each computer
--- or figure out a more dynamic solution
--- currently very specific to my desktop
 , position = Top
 , lowerOnStart = True
 , commands =

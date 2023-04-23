@@ -31,8 +31,8 @@ getPlayerIcon player =
 
 getStatusIcon status =
   case status of
-    "Playing" -> "▶️"
-    "Paused"  -> "⏸️"
+    "Playing" -> "\61515"
+    "Paused"  -> "\61516"
     _         -> ""
 
 isError :: ExitCode -> Bool
