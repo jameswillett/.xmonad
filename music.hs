@@ -43,21 +43,19 @@ choose a b
   | null a    = b
   | otherwise = a
 
-getPlayer statuses  = do
+getPlayerAndStatus statuses  = do
   players <- lines <$> readProcess "playerctl" ["metadata", "-f", "{{playerName}}", "-a"] ""
   let playersWithStatuses = zip (filter (/= "Stopped") statuses) players
-  let pausedPlayers = map snd $ filter ((=="Paused") . fst) playersWithStatuses
-  let playingPlayers = map snd $ filter ((=="Playing") . fst) playersWithStatuses
+  let pausedPlayers = filter ((=="Paused") . fst) playersWithStatuses
+  let playingPlayers = filter ((=="Playing") . fst) playersWithStatuses
   return $ head $ choose playingPlayers pausedPlayers
 
-getStatus player = trim <$> readProcess "playerctl" ["status", "-p", player] ""
 getAttribute player att = trim <$> readProcess "playerctl" ["metadata", "-f", wrapAtt att, "-p", player] ""
 
 main = do
   (code, statuses, err) <- readProcessWithExitCode "playerctl" ["status", "-a"] ""
   if isError code || all (== "Stopped") (lines statuses) then return () else do
-    player            <- getPlayer (lines statuses)
-    status            <- trim <$> readProcess "playerctl" ["status", "-p", player] ""
+    (status, player)  <- getPlayerAndStatus (lines statuses)
     let _getAttribute =  getAttribute player
     artist            <- _getAttribute "artist"
     title             <- _getAttribute "title"
