@@ -40,6 +40,7 @@ import XMonad.Util.Run (hPutStrLn, spawnPipe)
 import XMonad.Util.SpawnOnce (spawnOnce)
 
 import qualified Data.Map        as M
+import XMonad.Actions.UpdatePointer (updatePointer)
 
 home = "/home/james"
 xmonadDir = home ++ "/.xmonad"
@@ -165,7 +166,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
     -- modm-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
     -- modm2-{w,e,r}, Move client to screen 1, 2, or 3
     --
-    [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
+    [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f) >> updatePointer (0.5, 0.5) (0,0))
         | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
         , (f, m) <- [(view, 0), (shift, controlMask)]]
 
