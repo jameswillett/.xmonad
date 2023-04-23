@@ -270,7 +270,7 @@ myStartupHook = do
 
 main = do
   xmobarProc <- spawnPipe ("xmobar -x 0 " ++ xmonadDir ++ "/xmobar.hs")
-  xmonad $ docks $ ewmhFullscreen def {
+  xmonad $ docks $ ewmhFullscreen $ ewmh $ def {
       -- simple stuff
         terminal           = "kitty",
         focusFollowsMouse  = True,
