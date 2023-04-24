@@ -25,7 +25,7 @@ import XMonad.Hooks.EwmhDesktops (ewmh, ewmhFullscreen)
 import XMonad.Hooks.ManageDocks (avoidStruts, docks)
 import XMonad.Hooks.ManageHelpers (doFloatAt)
 import XMonad.Layout.Grid (Grid (GridRatio))
-import XMonad.Layout.Magnifier (magnifierczOff, magnifierczOff', MagnifyMsg(Toggle))
+import XMonad.Layout.Magnifier (magnifierczOff, magnifierczOff', MagnifyMsg(Toggle, ToggleOff))
 import XMonad.Layout.Named (named)
 import XMonad.Layout.NoBorders (smartBorders, noBorders)
 import XMonad.Layout.Spacing (Border(Border), bottom, left, top, right, spacingRaw)
@@ -90,6 +90,9 @@ modm2 = myModMask .|. controlMask
 modm3 = myModMask .|. mod4Mask
 modm4 = modm3 .|. controlMask
 
+resetMagAndChangeLayout :: Message a => a -> X ()
+resetMagAndChangeLayout msg = sendMessage ToggleOff >> sendMessage msg
+
 myKeys conf@(XConfig {XMonad.modMask = modm}) =
   M.fromList $
     [ ((shiftMask .|. controlMask, xK_l), nextWS)
@@ -108,7 +111,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
     , ((modm, xK_h      ), sendMessage Shrink) -- Shrink the master area
     , ((modm, xK_l      ), sendMessage Expand) -- Expand the master area
     , ((modm, xK_t      ), withFocused $ windows . sink) -- Push window back into tiling
-    , ((modm, xK_space  ), sendMessage NextLayout) -- Rotate through the available layout algorithms
+    , ((modm, xK_space  ), resetMagAndChangeLayout NextLayout) -- Rotate through the available layout algorithms
     , ((modm, xK_comma  ), sendMessage (IncMasterN 1)) -- Increment the number of windows in the master area
     , ((modm, xK_period ), sendMessage (IncMasterN (-1))) -- Deincrement the number of windows in the master area
     , ((modm, xK_q      ), spawn $ xmonadDir ++ "/recompile.sh") -- Restart xmonad
@@ -136,8 +139,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
 
     -- MOD4: meta + control + shift + alt
 
-    , ((modm4, xK_f     ), sendMessage $ JumpToLayout "full") -- jump to full
-    , ((modm4, xK_g     ), sendMessage $ JumpToLayout "grid") -- jump to grid
+    , ((modm4, xK_f     ), resetMagAndChangeLayout $ JumpToLayout "full") -- jump to full
+    , ((modm4, xK_g     ), resetMagAndChangeLayout $ JumpToLayout "grid") -- jump to grid
     , ((modm4, xK_s     ), spawn lockCmd) -- lock and suspend
     ]
 
