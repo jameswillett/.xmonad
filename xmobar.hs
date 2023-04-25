@@ -1,10 +1,11 @@
-Config { font = "JetBrainsMono Nerd Font Normal 11"
-, bgColor = "#282828"
-, alpha = 255
-, fgColor = "#7CAC7A"
-, position = Top
-, lowerOnStart = True
-, commands =
+Config 
+  { font = "JetBrainsMono Nerd Font Normal 10"
+  , bgColor = "#282828"
+  , alpha = 255
+  , fgColor = "#7CAC7A"
+  , position = Top
+  , lowerOnStart = True
+  , commands =
     [ Run Date "%a %b %d %H:%M:%S" "date" 1
     , Run Com "whoami" [] "" 0
     , Run Com "hostname" [] "" 0
@@ -13,7 +14,7 @@ Config { font = "JetBrainsMono Nerd Font Normal 11"
     , Run Com "runhaskell" ["/home/james/.xmonad/music.hs" ] "music" 5
     , Run StdinReader
     ]
-, sepChar = "%"
-, alignSep = "}{"
-, template = " %whoami%@%hostname% >>= %StdinReader%}{%music% [vol: %volume%] | <fc=#49E20E>%date%</fc> "
-}
+  , sepChar = "%"
+  , alignSep = "}{"
+  , template = " %whoami%@%hostname% >>= %StdinReader%}{%music% [vol: %volume%] | <fc=#49E20E>%date%</fc> "
+  }
