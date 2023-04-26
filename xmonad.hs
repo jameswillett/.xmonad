@@ -42,6 +42,7 @@ import XMonad.Util.SpawnOnce (spawnOnce)
 import qualified Data.Map        as M
 import XMonad.Actions.UpdatePointer (updatePointer)
 import Control.Monad (mapM_)
+import XMonad.Hooks.FadeInactive (fadeOut, fadeIn)
 
 home = "/home/james"
 xmonadDir = home ++ "/.xmonad"
@@ -81,19 +82,20 @@ rofi mode = "rofi" ++ combi ++ " -show " ++ _mode ++ " -show-icons"
 -- Key bindings. Add, modify or remove key bindings here.
 --
 
--- for my ergodox the mod keys are as follows
--- modm bottom left thumb
--- modm2 bottom right thumb
--- modm3 top left thumb
--- modm4 top right thumb
-modm2 = myModMask .|. controlMask
-modm3 = myModMask .|. mod4Mask
-modm4 = modm3 .|. controlMask
 
 resetMagAndChangeLayout :: Message a => a -> X ()
 resetMagAndChangeLayout msg = sendMessage ToggleOff >> sendMessage msg
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) =
+  -- for my ergodox the mod keys are as follows
+  -- modm bottom left thumb
+  -- modm2 bottom right thumb
+  -- modm3 top left thumb
+  -- modm4 top right thumb
+  let modm2 = modm .|. controlMask
+      modm3 = modm .|. mod4Mask
+      modm4 = modm .|. mod4Mask .|. controlMask
+  in
   M.fromList $
     [ ((shiftMask .|. controlMask, xK_l), nextWS)
     , ((shiftMask .|. controlMask, xK_h), prevWS)
@@ -126,6 +128,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
     , ((modm2, xK_k     ), windows swapUp    ) -- Swap the focused window with the previous window
     , ((modm2, xK_q     ), exitPrompt "exit" $ spawn "killall picom xidlehook redshift nitrogen" >> io exitSuccess) -- Quit xmonad
     , ((modm2, xK_c     ), kill) -- close focused window
+    , ((modm2, xK_t     ), withFocused $ fadeOut 0.5) -- make active window transparent
+    , ((modm2, xK_o     ), withFocused fadeIn) -- make active window opaque
 
     -- MOD3: meta + shift + alt
 
