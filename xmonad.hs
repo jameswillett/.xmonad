@@ -63,7 +63,6 @@ floatRectSmol = customFloating $ RationalRect (2/12) (1/12) (2/12) (3/12)
 scratchpads =
   [ NS "btop"      "kitty --name btop btop" (resource=? "btop"     ) floatRectBig
   , NS "1password" "1password"              (resource=? "1password") floatRectBig
-  , NS "emote"     "emote"                  (resource=? "emote"    ) floatRectSmol
   ]
 
 myModMask = mod1Mask .|. shiftMask -- shift + alt
