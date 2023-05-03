@@ -130,6 +130,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
     , ((modm2, xK_c     ), kill) -- close focused window
     , ((modm2, xK_t     ), withFocused $ fadeOut 0.5) -- make active window transparent
     , ((modm2, xK_o     ), withFocused fadeIn) -- make active window opaque
+    , ((modm2, xK_f     ), spawn "kitty ranger") -- launch ranger
 
     -- MOD3: meta + shift + alt
 
