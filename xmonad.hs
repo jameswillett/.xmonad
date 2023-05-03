@@ -238,12 +238,14 @@ myLayout =
 myManageHook = composeAll
     [ className =? "MPlayer"        --> doFloat
     , className =? "Gimp"           --> doFloat
-    , resource  =? "protonvpn"      --> doFloatAt 0 0
+    , className =? "Peek"           --> doFloatLeft
+    , resource  =? "protonvpn"      --> doFloatLeft
     , resource  =? "btop"           --> doFloat
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "kdesktop"       --> doIgnore
     , namedScratchpadManageHook scratchpads
     ]
+      where doFloatLeft = doFloatAt 0 0
 
 ------------------------------------------------------------------------
 -- Event handling
