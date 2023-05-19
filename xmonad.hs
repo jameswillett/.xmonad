@@ -74,7 +74,7 @@ rofi mode = "rofi" ++ combi ++ " -show " ++ _mode ++ " -show-icons"
     (combi, _mode) =
       case mode of
         Drun  -> (" -combi-modi window,drun", "combi")
-        Run   -> ("", "run")
+        Run   -> ("", "run -run-command '" ++ xmonadDir ++ "/rofisu.sh {cmd}'")
         Emoji -> (" -modi emoji", "emoji")
 
 ------------------------------------------------------------------------
@@ -239,6 +239,7 @@ myManageHook = composeAll
     [ className =? "MPlayer"        --> doFloat
     , className =? "Gimp"           --> doFloat
     , className =? "Peek"           --> doFloatLeft
+    , className =? "Yad"            --> doFloat -- this is for gksu
     , resource  =? "protonvpn"      --> doFloatLeft
     , resource  =? "btop"           --> doFloat
     , resource  =? "desktop_window" --> doIgnore
