@@ -275,6 +275,9 @@ myLogHook handle = dynamicLogWithPP $ def
   , ppOutput  = hPutStrLn handle
   }
 
+xidlehook time cmd = "xidlehook --timer " ++ show time ++ " '" ++ cmd ++ "' '' --not-when-audio --not-when-fullscreen --detect-sleep &"
+lockNotif = "dunstify -A \"action,label\" -u \"critical\" -a \"hey\" \"computer will lock in 1 minute\" -r 12345"
+
 startupCmds =
   [ xmonadDir ++ "/initxmonad.sh &"
   , xmonadDir ++ "/setupMonitors.sh &"
@@ -282,7 +285,8 @@ startupCmds =
   , "(picom --config " ++ xmonadDir ++ "/picom-xmonad.conf)&"
   , "(dunst -config " ++ xmonadDir ++ "/dunstrc) &"
   , "redshift -P &"
-  , "xidlehook --timer 600 '" ++ lockCmd ++ "' '' --not-when-audio --not-when-fullscreen --detect-sleep &"
+  , xidlehook 600 lockCmd
+  , xidlehook 540 lockNotif
   , "nm-applet &"
   ]
 
