@@ -30,7 +30,7 @@ import XMonad.Layout.Named (named)
 import XMonad.Layout.NoBorders (smartBorders, noBorders)
 import XMonad.Layout.Spacing (Border(Border), bottom, left, top, right, spacingRaw)
 import XMonad.Layout.Spiral (spiralWithDir, Direction(East), Rotation(CW))
-import XMonad.Layout.ThreeColumns (ThreeCol(ThreeColMid))
+import XMonad.Layout.ThreeColumns (ThreeCol(ThreeCol))
 import XMonad.Prompt (position, bgColor, borderColor, height, promptBorderWidth, historySize, XPPosition(Top))
 import XMonad.Prompt.ConfirmPrompt (confirmPrompt)
 import XMonad.StackSet (RationalRect(RationalRect), focusDown, focusUp, swapUp, swapDown, focusMaster, swapMaster, sink, greedyView, shift, view, shiftMaster)
@@ -214,7 +214,7 @@ myLayout =
       -- might need to change to (3/2) for normaler aspect ratios
       grid      = GridRatio (7/4)
       tiled     = Tall 1 r (2/3)
-      threeCol  = ThreeColMid 1 r (1/2)
+      threeCol  = ThreeCol 1 r (1/2)
       spiral    = spiralWithDir East CW (3/4)
 
       sb          px = Border { top = px, bottom = px, left = px, right = px }
@@ -275,8 +275,6 @@ myLogHook handle = dynamicLogWithPP $ def
   , ppOutput  = hPutStrLn handle
   }
 
-xidlehook time cmd = "xidlehook --timer " ++ show time ++ " '" ++ cmd ++ "' '' --not-when-audio --not-when-fullscreen --detect-sleep &"
-lockNotif = "dunstify -A \"action,label\" -u \"critical\" -a \"hey\" \"computer will lock in 1 minute\" -r 12345"
 
 startupCmds =
   [ xmonadDir ++ "/initxmonad.sh &"
@@ -285,10 +283,14 @@ startupCmds =
   , "(picom --config " ++ xmonadDir ++ "/picom-xmonad.conf)&"
   , "(dunst -config " ++ xmonadDir ++ "/dunstrc) &"
   , "redshift -P &"
-  , xidlehook 600 lockCmd
-  , xidlehook 540 lockNotif
+  , xidlehook 600 lockCmd ""
+  , xidlehook 540 lockNotif clearNotif
   , "nm-applet &"
   ]
+    where
+      xidlehook time cmd canceller = "xidlehook --timer " ++ show time ++ " '" ++ cmd ++ "' '" ++ canceller ++ "' --not-when-audio --not-when-fullscreen --detect-sleep &"
+      lockNotif = "dunstify -A \"action,label\" -u \"critical\" -a \"hey\" \"computer will lock in 1 minute\" -r 12345"
+      clearNotif = "dunstify -C 12345"
 
 myStartupHook = do
   setDefaultCursor xC_left_ptr
