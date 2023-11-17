@@ -1,1 +1,1 @@
-`ghc --make ~/.xmonad/xmonad.hs -package xmonad -package xmonad-contrib -i -ilib -dynamic -fforce-recomp -main-is main -v0 -o ~/.xmonad/xmonad-x86_64-linux -outputdir /tmp; xmonad --restart ;`
+`ghc --make ~/.xmonad/Main.hs -package xmonad -package xmonad-contrib -package X11 -i -ilib -dynamic -fforce-recomp -main-is main -v0 -o ~/.xmonad/xmonad-x86_64-linux -outputdir /tmp; xmonad --restart ;`

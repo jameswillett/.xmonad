@@ -13,7 +13,6 @@ clampLength n string = clamped ++ (if string /= clamped then ellipses else "")
 trim :: String -> String
 trim = dropWhileEnd isSpace . dropWhile isSpace
 
-
 wrap pre suff string = pre ++ string ++ suff
 
 wrapAtt :: String -> String
@@ -36,8 +35,7 @@ getStatusIcon status =
     _         -> ""
 
 isError :: ExitCode -> Bool
-isError ExitSuccess = False
-isError _           = True
+isError = (/=) ExitSuccess
 
 choose a b
   | null a    = b
