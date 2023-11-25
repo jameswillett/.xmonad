@@ -115,7 +115,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
     , ((modm, xK_space  ), resetMagAndChangeLayout NextLayout) -- Rotate through the available layout algorithms
     , ((modm, xK_comma  ), sendMessage (IncMasterN 1)) -- Increment the number of windows in the master area
     , ((modm, xK_period ), sendMessage (IncMasterN (-1))) -- Deincrement the number of windows in the master area
-    , ((modm, xK_q      ), spawn $ xmonadDir ++ "/recompile.sh") -- Restart xmonad
+    , ((modm, xK_q      ), spawn $ "xmonad --recompile && xmonad --restart") -- Restart xmonad
 
     -- MOD2: control + shift + alt
 

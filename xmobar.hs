@@ -11,7 +11,7 @@ Config
     , Run Com "hostname" [] "" 0
     , Run Com "/home/james/.xmonad/wifi.sh" [] "wifi" 5
     , Run Com "/home/james/.xmonad/volume.sh" ["-s"] "volume" 5
-    , Run Com "runhaskell" ["/home/james/.xmonad/music.hs" ] "music" 5
+    , Run Com "/home/james/.xmonad/music" [] "music" 5
     , Run StdinReader
     ]
   , sepChar = "%"
