@@ -6,7 +6,7 @@ Config
   , position = Top
   , lowerOnStart = True
   , commands =
-    [ Run Date "%a %b %d %H:%M:%S" "date" 1
+    [ Run Date "%a %b %d %Y %H:%M:%S" "date" 1
     , Run Com "whoami" [] "" 0
     , Run Com "hostname" [] "" 0
     , Run Com "/home/james/.xmonad/wifi.sh" [] "wifi" 5
