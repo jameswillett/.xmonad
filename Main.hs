@@ -196,19 +196,16 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) =
 
 myLayout =
   smartBorders
-  (   named "grid"   (withGap $ withMag grid)
-  ||| named "tall"   (withGap $ withMag' tiled)
-  ||| named "3col"   (withGap $ withMag' threeCol)
-  ||| named "spiral" (withGap $ withMag' spiral)
+  (   named "grid"   (withGapMag grid)
+  ||| named "tall"   (withGapMag tiled)
+  ||| named "3col"   (withGapMag threeCol)
+  ||| named "spiral" (withGapMag spiral)
   ||| named "fullg"  (avoidStruts full)
   ||| named "full"   full
   )
     where
-      withMag' = magnifierczOff' 1.15
-      withMag  = magnifierczOff 1.15
-
       full = noBorders Full
-      withGap l = avoidStruts $ _spacingRaw 10 l
+      withGapMag = avoidStruts . _spacingRaw 10 . magnifierczOff 1.15
 
       -- percentage per resize message
       r         = 3 / 100
