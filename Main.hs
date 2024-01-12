@@ -25,7 +25,7 @@ import XMonad.Hooks.EwmhDesktops (ewmh, ewmhFullscreen)
 import XMonad.Hooks.ManageDocks (avoidStruts, docks)
 import XMonad.Hooks.ManageHelpers (doFloatAt)
 import XMonad.Layout.Grid (Grid (GridRatio))
-import XMonad.Layout.Magnifier (magnifierczOff, magnifierczOff', MagnifyMsg(Toggle, ToggleOff))
+import XMonad.Layout.Magnifier (magnifierczOff, magnifierczOff', MagnifyMsg(Toggle, ToggleOff, MagnifyMore, MagnifyLess))
 import XMonad.Layout.Named (named)
 import XMonad.Layout.NoBorders (smartBorders, noBorders)
 import XMonad.Layout.Spacing (Border(Border), bottom, left, top, right, spacingRaw)
@@ -141,6 +141,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
     , ((modm3, xK_t     ), namedScratchpadAction scratchpads "btop")
     , ((modm3, xK_p     ), namedScratchpadAction scratchpads "1password")
     , ((modm3, xK_m     ), sendMessage Toggle) -- toggle magnification of non-fullscreen layouts
+    , ((modm3, xK_equal ), sendMessage MagnifyMore) -- increase magnification 
+    , ((modm3, xK_minus ), sendMessage MagnifyLess) -- decrease magnification
 
     -- MOD4: meta + control + shift + alt
 
