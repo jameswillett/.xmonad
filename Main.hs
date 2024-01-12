@@ -303,7 +303,7 @@ main = do
   xmonad $ docks $ ewmhFullscreen $ ewmh $ def {
       -- simple stuff
         terminal           = "kitty",
-        focusFollowsMouse  = True,
+        focusFollowsMouse  = False,
         clickJustFocuses   = False,
         borderWidth        = 6,
         modMask            = myModMask,
